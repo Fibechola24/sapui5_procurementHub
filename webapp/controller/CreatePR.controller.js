@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel"
 ], function(Controller, History, MessageToast, MessageBox, JSONModel) {
     "use strict";
-
+  //phase three  Create Purchase Request form with items table"
     return Controller.extend("ui5.procurementhub.controller.CreatePR", {
         
         onInit: function() {
@@ -181,7 +181,6 @@ sap.ui.define([
                 oTitle.setText("Items (" + aItems.length + ")");
             }
         },
-
         _updateTotalAmount: function() {
             var oModel = this.getView().getModel();
             var aItems = oModel.getProperty("/items");

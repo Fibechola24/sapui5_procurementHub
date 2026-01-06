@@ -116,6 +116,13 @@
           "target": [
             "settings"
           ]
+        },
+        {
+          "name": "prDetail",
+          "pattern": "pr-detail/{prNumber}",
+          "target": [
+            "prDetail"
+          ]
         }
       ],
       "targets": {
@@ -158,6 +165,11 @@
           "viewName": "Settings",
           "viewLevel": 2,
           "title": "Settings"
+        },
+        "prDetail": {
+          "viewName": "PRDetail",
+          "viewLevel": 3,
+          "title": "Purchase Request Details"
         }
       }
     }

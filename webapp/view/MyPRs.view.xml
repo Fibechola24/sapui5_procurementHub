@@ -1,0 +1,168 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    controllerName="ui5.procurementhub.controller.MyPRs"
+    displayBlock="true">
+    
+    <Page 
+        id="myPRsPage"
+        title="My Purchase Requests"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        class="sapUiResponsiveContentPadding">
+        
+        <headerContent>
+            <Button 
+                icon="sap-icon://add"
+                text="Create New"
+                press=".onCreateNew"/>
+            <Button 
+                icon="sap-icon://excel-attachment"
+                text="Export"
+                press=".onExport"/>
+        </headerContent>
+        
+        <content>
+            <Table 
+                id="prTable"
+                items="{
+                    path: '/purchaseRequests',
+                    sorter: {
+                        path: 'creationDate',
+                        descending: true
+                    }
+                }"
+                growing="true"
+                growingThreshold="10"
+                mode="SingleSelectMaster"
+                selectionChange=".onSelectionChange"
+                updateFinished=".onUpdateFinished">
+                
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title 
+                            id="tableHeader"
+                            text="Purchase Requests ({= ${/purchaseRequests}.length })"
+                            level="H2"/>
+                        <ToolbarSpacer/>
+                        <SearchField 
+                            id="searchField"
+                            width="20rem"
+                            placeholder="Search requests..."
+                            search=".onSearch"
+                            liveChange=".onLiveSearch"/>
+                        <Button 
+                            id="filterButton"
+                            icon="sap-icon://filter"
+                            press=".onOpenFilter"/>
+                        <Button 
+                            icon="sap-icon://sort"
+                            press=".onOpenSort"/>
+                        <Button 
+                            icon="sap-icon://refresh"
+                            press=".onRefresh"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+                
+                <columns>
+                    <Column width="12em">
+                        <Text text="PR Number"/>
+                    </Column>
+                    <Column>
+                        <Text text="Description"/>
+                    </Column>
+                    <Column width="8em">
+                        <Text text="Status"/>
+                    </Column>
+                    <Column width="8em">
+                        <Text text="Priority"/>
+                    </Column>
+                    <Column width="8em">
+                        <Text text="Total Amount"/>
+                    </Column>
+                    <Column width="10em">
+                        <Text text="Created Date"/>
+                    </Column>
+                    <Column width="10em">
+                        <Text text="Required By"/>
+                    </Column>
+                    <Column width="6em">
+                        <Text text="Actions"/>
+                    </Column>
+                </columns>
+                
+                <items>
+                    <ColumnListItem 
+                        type="Active"
+                        press=".onItemPress">
+                        <cells>
+                            <ObjectIdentifier
+                                title="{prNumber}"
+                                text="{prType}"/>
+                            <Text text="{description}"/>
+                            <ObjectStatus 
+                                text="{status}"
+                                state="{
+                                    path: 'status',
+                                    formatter: '.formatter.statusState'
+                                }"/>
+                            <ObjectStatus 
+                                text="{priority}"
+                                state="{
+                                    path: 'priority',
+                                    formatter: '.formatter.priorityState'
+                                }"/>
+                            <ObjectNumber 
+                                number="{totalAmount}"
+                                unit="USD"
+                                state="Success"/>
+                            <Text text="{
+                                path: 'creationDate',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: {
+                                    style: 'medium'
+                                }
+                            }"/>
+                            <Text text="{
+                                path: 'requiredDate',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: {
+                                    style: 'medium'
+                                }
+                            }"/>
+                            <HBox>
+                                <Button 
+                                    icon="sap-icon://edit"
+                                    type="Transparent"
+                                    tooltip="Edit"
+                                    press=".onEditPress"/>
+                                <Button 
+                                    icon="sap-icon://copy"
+                                    type="Transparent"
+                                    tooltip="Duplicate"
+                                    press=".onDuplicatePress"/>
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button 
+                    text="View All"
+                    press=".onViewAll"/>
+                <Button 
+                    type="Emphasized"
+                    text="Create New"
+                    icon="sap-icon://add"
+                    press=".onCreateNew"/>
+            </OverflowToolbar>
+        </footer>
+        
+    </Page>
+    
+</mvc:View>
