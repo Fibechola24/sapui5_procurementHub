@@ -1,0 +1,53 @@
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  controllerName="ui5.procurementhub.controller.CreatePR">
+
+  <Page title="Create Purchase Request" showNavButton="true" navButtonPress=".onNavBack">
+    <content>
+      <VBox class="sapUiContentPadding">
+        <Title text="New Purchase Request" level="H2" class="sapUiSmallMarginBottom" />
+
+        <SimpleForm
+          editable="true"
+          layout="ResponsiveGridLayout"
+          class="sapUiSmallMarginTop"
+          labelSpanL="4" labelSpanM="4" labelSpanS="12"
+          emptySpanL="0" emptySpanM="0" emptySpanS="0"
+          columnsL="1" columnsM="1">
+
+          <Label text="Title" />
+          <Input placeholder="e.g., Laptop for new employee" />
+
+          <Label text="Category" />
+          <Select>
+            <items>
+              <core:Item key="it" text="IT Equipment" xmlns:core="sap.ui.core" />
+              <core:Item key="office" text="Office Supplies" xmlns:core="sap.ui.core" />
+              <core:Item key="services" text="Services" xmlns:core="sap.ui.core" />
+            </items>
+          </Select>
+
+          <Label text="Estimated Amount" />
+          <Input type="Number" placeholder="e.g., 1200" />
+
+          <Label text="Currency" />
+          <Select>
+            <items>
+              <core:Item key="EUR" text="EUR" xmlns:core="sap.ui.core" />
+              <core:Item key="USD" text="USD" xmlns:core="sap.ui.core" />
+            </items>
+          </Select>
+
+          <Label text="Notes" />
+          <TextArea rows="3" placeholder="Add justification or details..." />
+        </SimpleForm>
+
+        <Toolbar class="sapUiSmallMarginTop">
+          <ToolbarSpacer/>
+          <Button text="Submit" type="Emphasized" icon="sap-icon://paper-plane" press=".onSubmit"/>
+        </Toolbar>
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

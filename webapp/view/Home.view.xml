@@ -1,0 +1,50 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:layout="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    controllerName="ui5.procurementhub.controller.Home"
+    displayBlock="true">
+    
+    <Page 
+        id="homePage"
+        title="{i18n>appHomeTitle}"
+        showHeader="true"
+        class="sapUiResponsiveContentPadding">
+        
+        <headerContent>
+            <Button 
+                icon="sap-icon://sys-help"
+                tooltip="Help"
+                press=".onHelpPress"/>
+        </headerContent>
+        
+        <content>
+            <layout:VerticalLayout class="sapUiContentPadding" width="100%">
+                <Title 
+                    text="{i18n>appHomeTitle}" 
+                    level="H2"
+                    class="sapUiTinyMarginBottom"/>
+                <Text 
+                    text="{i18n>appHomeSubtitle}" 
+                    class="sapUiSmallMarginBottom"/>
+                
+                <Panel expandable="true" expanded="true" width="auto">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Quick Actions" level="H3"/>
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <content>
+                        <HBox class="sapUiSmallMargin" wrap="Wrap">
+                            <!-- Quick action buttons will be added in later phases -->
+                            <Text text="Quick actions will appear here..." class="sapUiTinyMargin"/>
+                        </HBox>
+                    </content>
+                </Panel>
+            </layout:VerticalLayout>
+        </content>
+        
+    </Page>
+    
+</mvc:View>

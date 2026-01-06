@@ -1,0 +1,169 @@
+{
+  "_version": "1.54.0",
+  "sap.app": {
+    "id": "ui5.procurementhub",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "dataSources": {}
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "sap-icon://shipping-status"
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    },
+    "supportedThemes": [
+      "sap_horizon"
+    ]
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "ui5.procurementhub.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "appView"
+    },
+    "dependencies": {
+      "minUI5Version": "1.108.0",
+      "libs": {
+        "sap.ui.core": {},
+        "sap.m": {},
+        "sap.ui.layout": {},
+        "sap.f": {},
+        "sap.ui.comp": {},
+        "sap.suite.ui.commons": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "ui5.procurementhub.i18n.i18n"
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "ui5.procurementhub.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "name": "home",
+          "pattern": "",
+          "target": [
+            "home"
+          ]
+        },
+        {
+          "name": "dashboard",
+          "pattern": "dashboard",
+          "target": [
+            "dashboard"
+          ]
+        },
+        {
+          "name": "createPR",
+          "pattern": "create-pr",
+          "target": [
+            "createPR"
+          ]
+        },
+        {
+          "name": "myPRs",
+          "pattern": "my-prs",
+          "target": [
+            "myPRs"
+          ]
+        },
+        {
+          "name": "approvals",
+          "pattern": "approvals",
+          "target": [
+            "approvals"
+          ]
+        },
+        {
+          "name": "analytics",
+          "pattern": "analytics",
+          "target": [
+            "analytics"
+          ]
+        },
+        {
+          "name": "suppliers",
+          "pattern": "suppliers",
+          "target": [
+            "suppliers"
+          ]
+        },
+        {
+          "name": "settings",
+          "pattern": "settings",
+          "target": [
+            "settings"
+          ]
+        }
+      ],
+      "targets": {
+        "home": {
+          "viewName": "Home",
+          "viewLevel": 1,
+          "title": "{i18n>appHomeTitle}"
+        },
+        "dashboard": {
+          "viewName": "Dashboard",
+          "viewLevel": 2,
+          "title": "Dashboard"
+        },
+        "createPR": {
+          "viewName": "CreatePR",
+          "viewLevel": 2,
+          "title": "Create Purchase Request"
+        },
+        "myPRs": {
+          "viewName": "MyPRs",
+          "viewLevel": 2,
+          "title": "My Purchase Requests"
+        },
+        "approvals": {
+          "viewName": "Approvals",
+          "viewLevel": 2,
+          "title": "Approvals Inbox"
+        },
+        "analytics": {
+          "viewName": "Analytics",
+          "viewLevel": 2,
+          "title": "Procurement Analytics"
+        },
+        "suppliers": {
+          "viewName": "Suppliers",
+          "viewLevel": 2,
+          "title": "Supplier Overview"
+        },
+        "settings": {
+          "viewName": "Settings",
+          "viewLevel": 2,
+          "title": "Settings"
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  }
+}

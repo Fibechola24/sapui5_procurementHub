@@ -1,0 +1,209 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:layout="sap.ui.layout"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:core="sap.ui.core"
+    controllerName="ui5.procurementhub.controller.Dashboard"
+    displayBlock="true">
+    
+    <Page 
+        id="dashboardPage"
+        title="Dashboard"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        class="sapUiResponsiveContentPadding">
+        
+        <headerContent>
+            <Button 
+                icon="sap-icon://refresh"
+                tooltip="Refresh"
+                press=".onRefresh"/>
+            <Button 
+                icon="sap-icon://filter"
+                tooltip="Filter"
+                press=".onFilter"/>
+        </headerContent>
+        
+        <content>
+            <ScrollContainer 
+                height="100%" 
+                width="100%" 
+                vertical="true" 
+                horizontal="false">
+                
+                <!-- KPI Cards Section -->
+                <Panel headerText="Key Performance Indicators" class="sapUiNoContentPadding">
+                    <content>
+                        <HBox class="sapUiSmallMargin" wrap="Wrap" justifyContent="SpaceBetween">
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Total PRs"
+                                        subtitle="This Month"
+                                        statusText="+12%"
+                                        statusState="Success"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <Title text="142" level="H1" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Purchase Requests" class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
+                            
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Pending Approvals"
+                                        subtitle="Requires Action"
+                                        statusText="5 Urgent"
+                                        statusState="Error"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <Title text="23" level="H1" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Awaiting Approval" class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
+                            
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Avg Processing Time"
+                                        subtitle="Last 30 Days"
+                                        statusText="-2 days"
+                                        statusState="Success"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <Title text="3.2" level="H1" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Days" class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
+                            
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Cost Savings"
+                                        subtitle="YTD"
+                                        statusText="+8%"
+                                        statusState="Success"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <Title text="$124K" level="H1" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Total Savings" class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
+                        </HBox>
+                    </content>
+                </Panel>
+                
+                <!-- Quick Tiles Section -->
+                <Panel headerText="Quick Actions" class="sapUiNoContentPadding sapUiMediumMarginTop">
+                    <content>
+                        <HBox class="sapUiSmallMargin" wrap="Wrap">
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Create PR"
+                                subheader="New Purchase Request"
+                                press=".onCreatePR"
+                                frameType="OneByOne">
+                                <TileContent unit="" footer="">
+                                    <ImageContent src="sap-icon://create-form"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="My PRs"
+                                subheader="View All Requests"
+                                press=".onMyPRs"
+                                frameType="OneByOne">
+                                <TileContent unit="" footer="">
+                                    <ImageContent src="sap-icon://list"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Approvals"
+                                subheader="Pending Actions"
+                                press=".onApprovals"
+                                frameType="OneByOne">
+                                <TileContent unit="" footer="">
+                                    <ImageContent src="sap-icon://approvals"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Analytics"
+                                subheader="Reports & Insights"
+                                press=".onAnalytics"
+                                frameType="OneByOne">
+                                <TileContent unit="" footer="">
+                                    <ImageContent src="sap-icon://business-objects-experience"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Suppliers"
+                                subheader="Vendor Management"
+                                press=".onSuppliers"
+                                frameType="OneByOne">
+                                <TileContent unit="" footer="">
+                                    <ImageContent src="sap-icon://supplier"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Settings"
+                                subheader="Configuration"
+                                press=".onSettings"
+                                frameType="OneByOne">
+                                <TileContent unit="" footer="">
+                                    <ImageContent src="sap-icon://settings"/>
+                                </TileContent>
+                            </GenericTile>
+                        </HBox>
+                    </content>
+                </Panel>
+                
+                <!-- Recent Activity Section -->
+                <Panel headerText="Recent Activity" expandable="true" expanded="true" class="sapUiMediumMarginTop">
+                    <content>
+                        <List 
+                            items="{path: '/recentActivities', templateShareable: false}"
+                            class="sapUiNoContentPadding">
+                            <StandardListItem
+                                title="{title}"
+                                description="{description}"
+                                info="{status}"
+                                infoState="{infoState}"
+                                type="Active"
+                                press=".onActivityPress"/>
+                        </List>
+                    </content>
+                </Panel>
+                
+            </ScrollContainer>
+        </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Text text="Last updated: Today 10:30 AM" class="sapUiTinyMarginEnd"/>
+            </OverflowToolbar>
+        </footer>
+        
+    </Page>
+    
+</mvc:View>
