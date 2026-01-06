@@ -90,6 +90,13 @@
           ]
         },
         {
+          "name": "prDetail",
+          "pattern": "pr-detail/{prNumber}",
+          "target": [
+            "prDetail"
+          ]
+        },
+        {
           "name": "approvals",
           "pattern": "approvals",
           "target": [
@@ -116,13 +123,6 @@
           "target": [
             "settings"
           ]
-        },
-        {
-          "name": "prDetail",
-          "pattern": "pr-detail/{prNumber}",
-          "target": [
-            "prDetail"
-          ]
         }
       ],
       "targets": {
@@ -146,6 +146,11 @@
           "viewLevel": 2,
           "title": "My Purchase Requests"
         },
+        "prDetail": {
+          "viewName": "PRDetail",
+          "viewLevel": 3,
+          "title": "Purchase Request Details"
+        },
         "approvals": {
           "viewName": "Approvals",
           "viewLevel": 2,
@@ -165,11 +170,6 @@
           "viewName": "Settings",
           "viewLevel": 2,
           "title": "Settings"
-        },
-        "prDetail": {
-          "viewName": "PRDetail",
-          "viewLevel": 3,
-          "title": "Purchase Request Details"
         }
       }
     }

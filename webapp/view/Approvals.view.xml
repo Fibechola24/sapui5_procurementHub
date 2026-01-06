@@ -1,0 +1,21 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    controllerName="ui5.procurementhub.controller.Approvals"
+    height="100%">
+    
+    <Page 
+        title="Approvals Inbox"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <content>
+            <MessageStrip
+                text="Approvals page will be implemented in future phase"
+                type="Information"
+                showIcon="true"
+                class="sapUiMediumMargin"/>
+        </content>
+    </Page>
+    
+</mvc:View>

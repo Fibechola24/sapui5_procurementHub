@@ -1,0 +1,21 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    controllerName="ui5.procurementhub.controller.PRDetail"
+    height="100%">
+    
+    <Page 
+        title="Purchase Request Details"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <content>
+            <MessageStrip
+                text="PR detail view will be implemented in future phase"
+                type="Information"
+                showIcon="true"
+                class="sapUiMediumMargin"/>
+        </content>
+    </Page>
+    
+</mvc:View>

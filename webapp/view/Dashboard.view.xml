@@ -144,7 +144,7 @@
                             <GenericTile 
                                 class="sapUiTinyMargin"
                                 header="Analytics"
-                                subheader="Reports & Insights"
+                                subheader="Reports and Insights"
                                 press=".onAnalytics"
                                 frameType="OneByOne">
                                 <TileContent unit="" footer="">
