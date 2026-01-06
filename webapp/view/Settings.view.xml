@@ -1,0 +1,257 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    controllerName="ui5.procurementhub.controller.Settings"
+    displayBlock="true">
+    
+    <Page 
+        id="settingsPage"
+        title="Settings"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        class="sapUiResponsiveContentPadding">
+        
+        <content>
+            <IconTabBar
+                id="settingsTabBar"
+                expanded="true"
+                class="sapUiResponsiveContentPadding">
+                
+                <items>
+                    <!-- User Preferences Tab -->
+                    <IconTabFilter
+                        text="User Preferences"
+                        key="preferences"
+                        icon="sap-icon://user-settings">
+                        <ScrollContainer 
+                            height="100%" 
+                            width="100%" 
+                            vertical="true" 
+                            horizontal="false">
+                            
+                            <Panel headerText="Display Settings">
+                                <content>
+                                    <form:SimpleForm 
+                                        editable="true"
+                                        layout="ResponsiveGridLayout">
+                                        <Label text="Theme"/>
+                                        <Select
+                                            selectedKey="{/theme}"
+                                            items="{
+                                                path: '/themes',
+                                                templateShareable: false
+                                            }">
+                                            <core:Item key="{key}" text="{text}"/>
+                                        </Select>
+                                        
+                                        <Label text="Density"/>
+                                        <Select
+                                            selectedKey="{/density}"
+                                            items="{
+                                                path: '/densities',
+                                                templateShareable: false
+                                            }">
+                                            <core:Item key="{key}" text="{text}"/>
+                                        </Select>
+                                        
+                                        <Label text="Default View"/>
+                                        <Select
+                                            selectedKey="{/defaultView}"
+                                            items="{
+                                                path: '/defaultViews',
+                                                templateShareable: false
+                                            }">
+                                            <core:Item key="{key}" text="{text}"/>
+                                        </Select>
+                                        
+                                        <Label text="Items per Page"/>
+                                        <StepInput
+                                            value="{/itemsPerPage}"
+                                            min="5"
+                                            max="100"
+                                            step="5"/>
+                                    </form:SimpleForm>
+                                </content>
+                            </Panel>
+                            
+                            <Panel headerText="Notification Settings" class="sapUiMediumMarginTop">
+                                <content>
+                                    <VBox class="sapUiSmallMargin">
+                                        <CheckBox 
+                                            text="Email notifications"
+                                            selected="{/notifications/email}"
+                                            class="sapUiSmallMarginBottom"/>
+                                        <CheckBox 
+                                            text="Push notifications"
+                                            selected="{/notifications/push}"
+                                            class="sapUiSmallMarginBottom"/>
+                                        <CheckBox 
+                                            text="Approval reminders"
+                                            selected="{/notifications/approvalReminders}"
+                                            class="sapUiSmallMarginBottom"/>
+                                        <CheckBox 
+                                            text="PR status updates"
+                                            selected="{/notifications/statusUpdates}"/>
+                                    </VBox>
+                                </content>
+                            </Panel>
+                        </ScrollContainer>
+                    </IconTabFilter>
+                    
+                    <!-- Application Settings Tab -->
+                    <IconTabFilter
+                        text="Application"
+                        key="application"
+                        icon="sap-icon://settings">
+                        <ScrollContainer 
+                            height="100%" 
+                            width="100%" 
+                            vertical="true" 
+                            horizontal="false">
+                            
+                            <Panel headerText="General Settings">
+                                <content>
+                                    <form:SimpleForm 
+                                        editable="true"
+                                        layout="ResponsiveGridLayout">
+                                        <Label text="Default Currency"/>
+                                        <Select
+                                            selectedKey="{/defaultCurrency}"
+                                            items="{
+                                                path: '/currencies',
+                                                templateShareable: false
+                                            }">
+                                            <core:Item key="{key}" text="{text}"/>
+                                        </Select>
+                                        
+                                        <Label text="Default Language"/>
+                                        <Select
+                                            selectedKey="{/defaultLanguage}"
+                                            items="{
+                                                path: '/languages',
+                                                templateShareable: false
+                                            }">
+                                            <core:Item key="{key}" text="{text}"/>
+                                        </Select>
+                                        
+                                        <Label text="Auto-save Interval (minutes)"/>
+                                        <StepInput
+                                            value="{/autosaveInterval}"
+                                            min="1"
+                                            max="30"
+                                            step="1"/>
+                                        
+                                        <Label text="Session Timeout (minutes)"/>
+                                        <StepInput
+                                            value="{/sessionTimeout}"
+                                            min="5"
+                                            max="120"
+                                            step="5"/>
+                                    </form:SimpleForm>
+                                </content>
+                            </Panel>
+                            
+                            <Panel headerText="Data Management" class="sapUiMediumMarginTop">
+                                <content>
+                                    <VBox class="sapUiSmallMargin">
+                                        <Button 
+                                            text="Clear Cache"
+                                            icon="sap-icon://delete"
+                                            press=".onClearCache"
+                                            class="sapUiSmallMarginBottom"
+                                            type="Reject"/>
+                                        <Button 
+                                            text="Export Settings"
+                                            icon="sap-icon://download"
+                                            press=".onExportSettings"
+                                            class="sapUiSmallMarginBottom"/>
+                                        <Button 
+                                            text="Import Settings"
+                                            icon="sap-icon://upload"
+                                            press=".onImportSettings"/>
+                                    </VBox>
+                                </content>
+                            </Panel>
+                        </ScrollContainer>
+                    </IconTabFilter>
+                    
+                    <!-- About Tab -->
+                    <IconTabFilter
+                        text="About"
+                        key="about"
+                        icon="sap-icon://information">
+                        <ScrollContainer 
+                            height="100%" 
+                            width="100%" 
+                            vertical="true" 
+                            horizontal="false">
+                            
+                            <Panel headerText="Application Information">
+                                <content>
+                                    <VBox class="sapUiSmallMargin">
+                                        <Title text="Procurement Hub" level="H2" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Version: 1.0.0" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Build Date: 2023-12-01" class="sapUiTinyMarginBottom"/>
+                                        <Text text="UI5 Version: 1.108.0" class="sapUiTinyMarginBottom"/>
+                                        
+                                        <Link 
+                                            text="Documentation"
+                                            href="https://help.sap.com"
+                                            target="_blank"
+                                            class="sapUiTinyMarginTop"/>
+                                        <Link 
+                                            text="Release Notes"
+                                            href="#"
+                                            press=".onReleaseNotes"
+                                            class="sapUiTinyMarginTop"/>
+                                        <Link 
+                                            text="Privacy Policy"
+                                            href="#"
+                                            press=".onPrivacyPolicy"
+                                            class="sapUiTinyMarginTop"/>
+                                    </VBox>
+                                </content>
+                            </Panel>
+                            
+                            <Panel headerText="Support" class="sapUiMediumMarginTop">
+                                <content>
+                                    <VBox class="sapUiSmallMargin">
+                                        <Title text="Contact Support" level="H3" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Email: support@procurementhub.com" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Phone: +1-800-PROCURE" class="sapUiTinyMarginBottom"/>
+                                        
+                                        <Button 
+                                            text="Submit Feedback"
+                                            icon="sap-icon://feedback"
+                                            press=".onSubmitFeedback"
+                                            class="sapUiSmallMarginTop"/>
+                                    </VBox>
+                                </content>
+                            </Panel>
+                        </ScrollContainer>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button 
+                    text="Reset to Defaults"
+                    press=".onResetDefaults"
+                    type="Reject"/>
+                <Button 
+                    type="Emphasized"
+                    text="Save Settings"
+                    icon="sap-icon://save"
+                    press=".onSaveSettings"/>
+            </OverflowToolbar>
+        </footer>
+        
+    </Page>
+    
+</mvc:View>
