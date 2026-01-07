@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/Device",
-    "ui5/procurementhub/model/models"
-], function(UIComponent, Device, models) {
+    "ui5/procurementhub/model/models",
+    "ui5/procurementhub/model/SettingsModel"
+], function(UIComponent, Device, models, SettingsModel) {
     "use strict";
 
     return UIComponent.extend("ui5.procurementhub.Component", {
@@ -11,27 +12,62 @@ sap.ui.define([
         },
 
         init: function() {
+            // Call parent init
             UIComponent.prototype.init.apply(this, arguments);
             
             // Set device model
             this.setModel(models.createDeviceModel(), "device");
             
+            // Initialize and set settings model
+            this._settingsModel = SettingsModel.init();
+            this.setModel(this._settingsModel, "settings");
+            
+            // Set content density based on settings
+            this._applyContentDensity();
+            
             // Initialize router
             this.getRouter().initialize();
-            
-            // Optional: You could auto-navigate to dashboard here
-            // this.getRouter().navTo("home", {}, true);
         },
 
         getContentDensityClass: function() {
             if (!this._sContentDensityClass) {
-                if (!Device.support.touch) {
+                // Get density from settings model
+                var sDensity = this.getModel("settings").getProperty("/density");
+                
+                if (sDensity === "COMPACT") {
                     this._sContentDensityClass = "sapUiSizeCompact";
-                } else {
+                } else if (sDensity === "COZY") {
                     this._sContentDensityClass = "sapUiSizeCozy";
+                } else {
+                    // Fallback based on device
+                    if (!Device.support.touch) {
+                        this._sContentDensityClass = "sapUiSizeCompact";
+                    } else {
+                        this._sContentDensityClass = "sapUiSizeCozy";
+                    }
                 }
             }
             return this._sContentDensityClass;
+        },
+
+        _applyContentDensity: function() {
+            // Apply density class to the root control
+            document.body.classList.add(this.getContentDensityClass());
+        },
+
+        // Get settings model instance
+        getSettingsModel: function() {
+            return this._settingsModel;
+        },
+
+        // Update a setting
+        updateSetting: function(key, value) {
+            SettingsModel.updateSetting(this._settingsModel, key, value);
+        },
+
+        // Reset all settings
+        resetSettings: function() {
+            SettingsModel.resetToDefaults(this._settingsModel);
         }
     });
 });

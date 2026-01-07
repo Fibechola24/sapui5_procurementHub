@@ -49,6 +49,11 @@
         "settings": {
           "bundleName": "ui5.procurementhub.i18n.i18n"
         }
+      },
+      "settings": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {},
+        "preload": true
       }
     },
     "routing": {
@@ -138,15 +143,15 @@
         }
       ],
       "targets": {
-     "home": {
-            "viewName": "Home",
-            "viewLevel": 1,
-            "title": "{i18n>appHomeTitle}"
+        "home": {
+          "viewName": "Home",
+          "viewLevel": 1,
+          "title": "{i18n>appHomeTitle}"
         },
         "dashboard": {
-            "viewName": "Dashboard",
-            "viewLevel": 2,
-            "title": "Dashboard"
+          "viewName": "Dashboard",
+          "viewLevel": 2,
+          "title": "Dashboard"
         },
         "createPR": {
           "viewName": "CreatePR",

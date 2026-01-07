@@ -4,6 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Procurement Hub</title>
+    
+    <!-- Load saved theme before UI5 bootstrap -->
+    <script>
+        // Try to load saved theme from localStorage
+        try {
+            var savedSettings = localStorage.getItem("procurementHubSettings");
+            if (savedSettings) {
+                var settings = JSON.parse(savedSettings);
+                if (settings.theme) {
+                    // Store theme to be used in bootstrap
+                    window._savedTheme = settings.theme;
+                }
+            }
+        } catch (e) {
+            console.warn("Could not load saved theme:", e);
+        }
+    </script>
+    
     <script id="sap-ui-bootstrap"
         src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_horizon"
@@ -14,6 +32,15 @@
         data-sap-ui-compatVersion="edge"
         data-sap-ui-async="true"
         data-sap-ui-frameOptions="trusted">
+    </script>
+    
+    <!-- Override theme if saved -->
+    <script>
+        if (window._savedTheme) {
+            sap.ui.getCore().attachInit(function() {
+                sap.ui.getCore().applyTheme(window._savedTheme);
+            });
+        }
     </script>
 </head>
 <body class="sapUiBody" id="content">
