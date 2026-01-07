@@ -6,19 +6,19 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel"
 ], function(Controller, History, MessageToast, MessageBox, JSONModel) {
     "use strict";
-  //phase three  Create Purchase Request form with items table"
+
     return Controller.extend("ui5.procurementhub.controller.CreatePR", {
         
         onInit: function() {
             // Initialize form model
             var oModel = new JSONModel({
-                requestType: "",
+                requestType: "GOODS",
                 priority: "MEDIUM",
                 department: "",
                 costCenter: "",
                 requiredDate: new Date().toISOString().slice(0, 10),
                 justification: "",
-                createdBy: "John Doe",
+                createdBy: this._getCurrentUser(),
                 creationDate: new Date().toLocaleDateString(),
                 totalAmount: 0,
                 items: [],
@@ -39,6 +39,129 @@ sap.ui.define([
             
             this.getView().setModel(oModel);
             this._updateItemsCount();
+        },
+
+        _getCurrentUser: function() {
+            // In a real app, get from authentication
+            // For now, return a mock user
+            return "John Doe";
+        },
+
+        onSubmit: function() {
+            var oModel = this.getView().getModel();
+            var formData = oModel.getData();
+            var aItems = formData.items;
+            
+            // Validation
+            if (aItems.length === 0) {
+                MessageBox.error("Please add at least one item before submitting");
+                return;
+            }
+            
+            if (!formData.department) {
+                MessageBox.error("Please select a department");
+                return;
+            }
+            
+            if (!formData.costCenter) {
+                MessageBox.error("Please enter a cost center");
+                return;
+            }
+            
+            if (!formData.justification) {
+                MessageBox.error("Please provide a justification");
+                return;
+            }
+            
+            // Show confirmation dialog
+            MessageBox.confirm("Submit this purchase request for approval?", {
+                title: "Confirm Submission",
+                onClose: function(oAction) {
+                    if (oAction === MessageBox.Action.OK) {
+                        this._submitPurchaseRequest(formData);
+                    }
+                }.bind(this)
+            });
+        },
+
+        _submitPurchaseRequest: function(formData) {
+            // Get component and add PR
+            var oComponent = this.getOwnerComponent();
+            var newPR = oComponent.addPurchaseRequest({
+                requestType: formData.requestType,
+                priority: formData.priority,
+                department: formData.department,
+                costCenter: formData.costCenter,
+                requiredDate: formData.requiredDate,
+                justification: formData.justification,
+                totalAmount: parseFloat(formData.totalAmount) || 0,
+                items: formData.items.map(item => ({
+                    itemCode: item.itemCode || "ITEM-001",
+                    description: item.description || "",
+                    quantity: parseInt(item.quantity) || 1,
+                    unitPrice: parseFloat(item.unitPrice) || 0,
+                    total: (parseInt(item.quantity) || 1) * (parseFloat(item.unitPrice) || 0)
+                })),
+                attachments: formData.attachments,
+                createdBy: formData.createdBy
+            });
+            
+            if (newPR) {
+                // Show success message with PR number
+                MessageBox.success("Purchase Request submitted successfully!\n\nPR Number: " + newPR.prNumber, {
+                    onClose: function() {
+                        // Navigate to My Purchase Requests
+                        this.getOwnerComponent().getRouter().navTo("myPRs");
+                        
+                        // Optional: Clear form for next entry
+                        this.onClear();
+                    }.bind(this)
+                });
+            } else {
+                MessageBox.error("Failed to submit purchase request. Please try again.");
+            }
+        },
+
+        onSaveDraft: function() {
+            var oModel = this.getView().getModel();
+            var formData = oModel.getData();
+            var aItems = formData.items;
+            
+            if (aItems.length === 0) {
+                MessageBox.warning("No items added. Draft not saved.");
+                return;
+            }
+            
+            // Get component and add PR as draft
+            var oComponent = this.getOwnerComponent();
+            var newPR = oComponent.addPurchaseRequest({
+                requestType: formData.requestType,
+                priority: formData.priority,
+                department: formData.department,
+                costCenter: formData.costCenter,
+                requiredDate: formData.requiredDate,
+                justification: formData.justification,
+                totalAmount: parseFloat(formData.totalAmount) || 0,
+                items: formData.items,
+                attachments: formData.attachments,
+                createdBy: formData.createdBy
+            });
+            
+            if (newPR) {
+                // Update status to DRAFT
+                oComponent.updatePurchaseRequest(newPR.id, {
+                    status: "DRAFT",
+                    statusText: "Draft",
+                    workflowStatus: "Draft Saved"
+                });
+                
+                MessageBox.success("Draft saved successfully!\n\nPR Number: " + newPR.prNumber, {
+                    onClose: function() {
+                        // Navigate to My Purchase Requests
+                        this.getOwnerComponent().getRouter().navTo("myPRs");
+                    }.bind(this)
+                });
+            }
         },
 
         onNavBack: function() {

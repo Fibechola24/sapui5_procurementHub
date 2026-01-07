@@ -1,21 +1,213 @@
 <mvc:View
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
-    displayBlock="true"
+    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
     controllerName="ui5.procurementhub.controller.PRDetail"
-    height="100%">
+    displayBlock="true">
     
     <Page 
+        id="prDetailPage"
         title="Purchase Request Details"
         showNavButton="true"
-        navButtonPress=".onNavBack">
+        navButtonPress=".onNavBack"
+        class="sapUiResponsiveContentPadding">
+        
+        <headerContent>
+            <Button 
+                icon="sap-icon://edit"
+                text="Edit"
+                press=".onEdit"
+                visible="{= ${purchaseRequests>status} !== 'APPROVED' &amp;&amp; ${purchaseRequests>status} !== 'REJECTED' }"/>
+            <Button 
+                icon="sap-icon://print"
+                text="Print"
+                press=".onPrint"/>
+            <Button 
+                icon="sap-icon://share"
+                text="Share"
+                press=".onShare"/>
+        </headerContent>
+        
         <content>
-            <MessageStrip
-                text="PR detail view will be implemented in future phase"
-                type="Information"
-                showIcon="true"
-                class="sapUiMediumMargin"/>
+            <ObjectHeader
+                id="prHeader"
+                title="{purchaseRequests>prNumber}"
+                number="{
+                    path: 'purchaseRequests>totalAmount',
+                    formatter: '.formatter.formatCurrency'
+                }"
+                numberUnit="USD"
+                responsive="true"
+                backgroundDesign="Transparent">
+                
+                <statuses>
+                    <ObjectStatus 
+                        text="{purchaseRequests>statusText}"
+                        state="{
+                            path: 'purchaseRequests>status',
+                            formatter: '.formatter.statusState'
+                        }"/>
+                    <ObjectStatus 
+                        text="{purchaseRequests>priority}"
+                        state="{
+                            path: 'purchaseRequests>priority',
+                            formatter: '.formatter.priorityState'
+                        }"/>
+                </statuses>
+                
+                <attributes>
+                    <ObjectAttribute 
+                        title="Created By"
+                        text="{purchaseRequests>createdBy}"/>
+                    <ObjectAttribute 
+                        title="Department"
+                        text="{purchaseRequests>department}"/>
+                    <ObjectAttribute 
+                        title="Cost Center"
+                        text="{purchaseRequests>costCenter}"/>
+                    <ObjectAttribute 
+                        title="Created Date"
+                        text="{
+                            path: 'purchaseRequests>creationDate',
+                            formatter: '.formatter.formatDate'
+                        }"/>
+                    <ObjectAttribute 
+                        title="Required By"
+                        text="{
+                            path: 'purchaseRequests>requiredDate',
+                            formatter: '.formatter.formatDate'
+                        }"/>
+                </attributes>
+            </ObjectHeader>
+            
+            <Panel headerText="Request Information" expandable="true" expanded="true">
+                <content>
+                    <form:SimpleForm 
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="4"
+                        labelSpanL="3"
+                        labelSpanM="4"
+                        labelSpanS="12">
+                        
+                        <Label text="Request Type"/>
+                        <Text text="{purchaseRequests>prType}"/>
+                        
+                        <Label text="Justification"/>
+                        <Text text="{purchaseRequests>description}"/>
+                        
+                        <Label text="Workflow Status"/>
+                        <Text text="{purchaseRequests>workflowStatus}"/>
+                        
+                        <Label text="Approver"/>
+                        <Text text="{purchaseRequests>approver}"/>
+                        
+                        <Label text="Approval Date"/>
+                        <Text text="{
+                            path: 'purchaseRequests>approvalDate',
+                            formatter: '.formatter.formatDate'
+                        }"/>
+                        
+                        <Label text="Comments"/>
+                        <Text text="{purchaseRequests>comments}"/>
+                    </form:SimpleForm>
+                </content>
+            </Panel>
+            
+            <Panel headerText="Items" expandable="true" expanded="true" class="sapUiMediumMarginTop">
+                <content>
+                    <Table 
+                        id="itemsTable"
+                        items="{purchaseRequests>items}"
+                        class="sapUiResponsiveMargin">
+                        
+                        <columns>
+                            <Column>
+                                <Text text="Item Code"/>
+                            </Column>
+                            <Column>
+                                <Text text="Description"/>
+                            </Column>
+                            <Column>
+                                <Text text="Quantity"/>
+                            </Column>
+                            <Column>
+                                <Text text="Unit Price"/>
+                            </Column>
+                            <Column>
+                                <Text text="Total"/>
+                            </Column>
+                        </columns>
+                        
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{purchaseRequests>itemCode}"/>
+                                    <Text text="{purchaseRequests>description}"/>
+                                    <Text text="{purchaseRequests>quantity}"/>
+                                    <ObjectNumber 
+                                        number="{purchaseRequests>unitPrice}"
+                                        unit="USD"/>
+                                    <ObjectNumber 
+                                        number="{purchaseRequests>total}"
+                                        unit="USD"
+                                        state="Success"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </content>
+            </Panel>
+            
+            <Panel headerText="History" expandable="true" expanded="false" class="sapUiMediumMarginTop">
+                <content>
+                    <List>
+                        <StandardListItem
+                            title="Created"
+                            description="Purchase request created"
+                            info="{purchaseRequests>creationDate}"
+                            icon="sap-icon://create"/>
+                        <StandardListItem
+                            title="Submitted"
+                            description="Submitted for approval"
+                            info="{purchaseRequests>lastUpdated}"
+                            icon="sap-icon://journey-arrive"
+                            visible="{= ${purchaseRequests>status} !== 'DRAFT' }"/>
+                        <StandardListItem
+                            title="Last Updated"
+                            description="Last modification"
+                            info="{purchaseRequests>lastUpdated}"
+                            icon="sap-icon://history"/>
+                    </List>
+                </content>
+            </Panel>
         </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button 
+                    type="Reject"
+                    text="Delete"
+                    icon="sap-icon://delete"
+                    press=".onDelete"
+                    visible="{= ${purchaseRequests>status} === 'DRAFT' }"/>
+                <Button 
+                    type="Emphasized"
+                    text="Approve"
+                    icon="sap-icon://accept"
+                    press=".onApprove"
+                    visible="{= ${purchaseRequests>status} === 'PENDING' }"/>
+                <Button 
+                    type="Reject"
+                    text="Reject"
+                    icon="sap-icon://decline"
+                    press=".onReject"
+                    visible="{= ${purchaseRequests>status} === 'PENDING' }"/>
+            </OverflowToolbar>
+        </footer>
+        
     </Page>
     
 </mvc:View>

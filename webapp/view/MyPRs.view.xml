@@ -26,18 +26,18 @@
         <content>
             <Table 
                 id="prTable"
-                items="{
-                    path: '/purchaseRequests',
-                    sorter: {
-                        path: 'creationDate',
-                        descending: true
-                    }
-                }"
-                growing="true"
-                growingThreshold="10"
-                mode="SingleSelectMaster"
-                selectionChange=".onSelectionChange"
-                updateFinished=".onUpdateFinished">
+                    items="{
+                        path: 'purchaseRequests>/purchaseRequests',
+                        sorter: {
+                            path: 'creationDate',
+                            descending: true
+                        }
+                    }"
+                    growing="true"
+                    growingThreshold="10"
+                    mode="SingleSelectMaster"
+                    selectionChange=".onSelectionChange"
+                    updateFinished=".onUpdateFinished">
                 
                 <headerToolbar>
                     <OverflowToolbar>
@@ -97,32 +97,35 @@
                         type="Active"
                         press=".onItemPress">
                         <cells>
-                            <ObjectIdentifier
-                                title="{prNumber}"
-                                text="{prType}"/>
-                            <Text text="{description}"/>
+                           <ObjectIdentifier
+                                title="{purchaseRequests>prNumber}"
+                                text="{purchaseRequests>prType}"/>
+                            <Text text="{purchaseRequests>description}"/>
                             <ObjectStatus 
-                                text="{status}"
+                                text="{purchaseRequests>statusText}"
                                 state="{
-                                    path: 'status',
+                                    path: 'purchaseRequests>status',
                                     formatter: '.formatter.statusState'
                                 }"/>
                             <ObjectStatus 
-                                text="{priority}"
+                                text="{purchaseRequests>priority}"
                                 state="{
-                                    path: 'priority',
+                                    path: 'purchaseRequests>priority',
                                     formatter: '.formatter.priorityState'
                                 }"/>
                             <ObjectNumber 
-                                number="{totalAmount}"
-                                unit="USD"
-                                state="Success"/>
+                                number="{
+                                    path: 'purchaseRequests>totalAmount',
+                                    formatter: '.formatter.formatCurrency'
+                                }"
+                                unit="USD"/>
                             <Text text="{
-                                path: 'creationDate',
-                                type: 'sap.ui.model.type.Date',
-                                formatOptions: {
-                                    style: 'medium'
-                                }
+                                path: 'purchaseRequests>creationDate',
+                                formatter: '.formatter.formatDate'
+                            }"/>
+                            <Text text="{
+                                path: 'purchaseRequests>requiredDate',
+                                formatter: '.formatter.formatDate'
                             }"/>
                             <Text text="{
                                 path: 'requiredDate',

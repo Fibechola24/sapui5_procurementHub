@@ -45,19 +45,19 @@
                                 width="80px"
                                 height="80px"
                                 class="sapUiMediumMarginBottom"/>
-                            <Title 
+                            <!-- <Title 
                                 text="{i18n>appWelcomeTitle}" 
                                 level="H2"
-                                class="sapUiTinyMarginBottom"/>
-                            <Text 
+                                class="sapUiTinyMarginBottom"/> -->
+                            <!-- <Text 
                                 text="{i18n>appWelcomeSubtitle}" 
-                                class="sapUiSmallMarginBottom"/>
+                                class="sapUiSmallMarginBottom"/> -->
                             <Button
                                 text="Get Started"
                                 type="Emphasized"
                                 icon="sap-icon://accelerated"
                                 press=".onGetStarted"
-                                class="sapUiMediumMarginTop"/>
+                                class="sapUiMediumMarginBottom"/>
                         </VBox>
                     </f:content>
                 </f:Card>

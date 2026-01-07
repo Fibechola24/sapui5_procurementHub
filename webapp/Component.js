@@ -2,8 +2,9 @@ sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/Device",
     "ui5/procurementhub/model/models",
-    "ui5/procurementhub/model/SettingsModel"
-], function(UIComponent, Device, models, SettingsModel) {
+    "ui5/procurementhub/model/SettingsModel",
+    "ui5/procurementhub/service/PurchaseRequestService"
+], function(UIComponent, Device, models, SettingsModel, PurchaseRequestService) {
     "use strict";
 
     return UIComponent.extend("ui5.procurementhub.Component", {
@@ -21,6 +22,10 @@ sap.ui.define([
             // Initialize and set settings model
             this._settingsModel = SettingsModel.init();
             this.setModel(this._settingsModel, "settings");
+            
+            // Initialize and set purchase requests model
+            this._prModel = PurchaseRequestService.initModel();
+            this.setModel(this._prModel, "purchaseRequests");
             
             // Set content density based on settings
             this._applyContentDensity();
@@ -68,6 +73,31 @@ sap.ui.define([
         // Reset all settings
         resetSettings: function() {
             SettingsModel.resetToDefaults(this._settingsModel);
+        },
+
+        // Get purchase requests model
+        getPurchaseRequestsModel: function() {
+            return this._prModel;
+        },
+
+        // Add a new purchase request
+        addPurchaseRequest: function(prData) {
+            return PurchaseRequestService.addPurchaseRequest(this._prModel, prData);
+        },
+
+        // Update purchase request
+        updatePurchaseRequest: function(prId, updatedData) {
+            return PurchaseRequestService.updatePurchaseRequest(this._prModel, prId, updatedData);
+        },
+
+        // Delete purchase request
+        deletePurchaseRequest: function(prId) {
+            return PurchaseRequestService.deletePurchaseRequest(this._prModel, prId);
+        },
+
+        // Get purchase request
+        getPurchaseRequest: function(prId) {
+            return PurchaseRequestService.getPurchaseRequest(this._prModel, prId);
         }
     });
 });
