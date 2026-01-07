@@ -12,8 +12,15 @@ sap.ui.define([
 
         init: function() {
             UIComponent.prototype.init.apply(this, arguments);
+            
+            // Set device model
             this.setModel(models.createDeviceModel(), "device");
+            
+            // Initialize router
             this.getRouter().initialize();
+            
+            // Optional: You could auto-navigate to dashboard here
+            // this.getRouter().navTo("home", {}, true);
         },
 
         getContentDensityClass: function() {

@@ -2,6 +2,8 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:layout="sap.ui.layout"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
     xmlns:core="sap.ui.core"
     controllerName="ui5.procurementhub.controller.Home"
     displayBlock="true">
@@ -20,30 +22,230 @@
         </headerContent>
         
         <content>
-            <layout:VerticalLayout class="sapUiContentPadding" width="100%">
-                <Title 
-                    text="{i18n>appHomeTitle}" 
-                    level="H2"
-                    class="sapUiTinyMarginBottom"/>
-                <Text 
-                    text="{i18n>appHomeSubtitle}" 
-                    class="sapUiSmallMarginBottom"/>
+            <ScrollContainer 
+                height="100%" 
+                width="100%" 
+                vertical="true" 
+                horizontal="false"
+                class="sapUiMediumPaddingTop">
                 
-                <Panel expandable="true" expanded="true" width="auto">
-                    <headerToolbar>
-                        <OverflowToolbar>
-                            <Title text="Quick Actions" level="H3"/>
-                        </OverflowToolbar>
-                    </headerToolbar>
+                <!-- Welcome Header -->
+                <f:Card class="sapUiMediumMarginBottom">
+                    <f:header>
+                        <card:Header 
+                            title="{i18n>appWelcomeTitle}"
+                            subtitle="{i18n>appWelcomeSubtitle}"
+                            statusText="v1.0.0"/>
+                    </f:header>
+                    <f:content>
+                        <VBox alignItems="Center" class="sapUiLargePadding">
+                            <Image 
+                                src="sap-icon://shipping-status"
+                                decorative="true"
+                                width="80px"
+                                height="80px"
+                                class="sapUiMediumMarginBottom"/>
+                            <Title 
+                                text="{i18n>appWelcomeTitle}" 
+                                level="H2"
+                                class="sapUiTinyMarginBottom"/>
+                            <Text 
+                                text="{i18n>appWelcomeSubtitle}" 
+                                class="sapUiSmallMarginBottom"/>
+                            <Button
+                                text="Get Started"
+                                type="Emphasized"
+                                icon="sap-icon://accelerated"
+                                press=".onGetStarted"
+                                class="sapUiMediumMarginTop"/>
+                        </VBox>
+                    </f:content>
+                </f:Card>
+                
+                <!-- Quick Stats -->
+                <Panel headerText="Today's Snapshot" expandable="true" expanded="true">
                     <content>
-                        <HBox class="sapUiSmallMargin" wrap="Wrap">
-                            <!-- Quick action buttons will be added in later phases -->
-                            <Text text="Quick actions will appear here..." class="sapUiTinyMargin"/>
+                        <HBox class="sapUiSmallMargin" wrap="Wrap" justifyContent="Center">
+                            <f:Card width="220px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header title="New PRs" subtitle="Today"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox alignItems="Center" class="sapUiContentPadding">
+                                        <Title text="8" level="H2" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Purchase Requests"/>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+                            
+                            <f:Card width="220px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header title="Pending" subtitle="Awaiting Approval"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox alignItems="Center" class="sapUiContentPadding">
+                                        <Title text="5" level="H2" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Approvals"/>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+                            
+                            <f:Card width="220px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header title="Active" subtitle="Suppliers"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox alignItems="Center" class="sapUiContentPadding">
+                                        <Title text="23" level="H2" class="sapUiTinyMarginBottom"/>
+                                        <Text text="Vendors"/>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
                         </HBox>
                     </content>
                 </Panel>
-            </layout:VerticalLayout>
+                
+                <!-- Quick Actions Tiles -->
+                <Panel headerText="Quick Access" expandable="true" expanded="true" class="sapUiMediumMarginTop">
+                    <content>
+                        <HBox class="sapUiSmallMargin" wrap="Wrap" justifyContent="Center">
+                            <!-- Dashboard Tile -->
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Dashboard"
+                                subheader="Full Overview"
+                                press=".onDashboard"
+                                frameType="TwoByOne">
+                                <TileContent>
+                                    <ImageContent src="sap-icon://business-objects-experience"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Create PR"
+                                subheader="New Purchase Request"
+                                press=".onCreatePR"
+                                frameType="TwoByOne">
+                                <TileContent>
+                                    <ImageContent src="sap-icon://create-form"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="My PRs"
+                                subheader="View Your Requests"
+                                press=".onMyPRs"
+                                frameType="TwoByOne">
+                                <TileContent>
+                                    <ImageContent src="sap-icon://list"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Approvals"
+                                subheader="Pending Actions"
+                                press=".onApprovals"
+                                frameType="TwoByOne">
+                                <TileContent>
+                                    <ImageContent src="sap-icon://approvals"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Analytics"
+                                subheader="Reports and Insights"
+                                press=".onAnalytics"
+                                frameType="TwoByOne">
+                                <TileContent>
+                                    <ImageContent src="sap-icon://business-objects-experience"/>
+                                </TileContent>
+                            </GenericTile>
+                            
+                            <GenericTile 
+                                class="sapUiTinyMargin"
+                                header="Settings"
+                                subheader="Configuration"
+                                press=".onSettings"
+                                frameType="TwoByOne">
+                                <TileContent>
+                                    <ImageContent src="sap-icon://settings"/>
+                                </TileContent>
+                            </GenericTile>
+                        </HBox>
+                    </content>
+                </Panel>
+                
+                <!-- Recent Activity -->
+                <Panel headerText="Recent Activity" expandable="true" expanded="false" class="sapUiMediumMarginTop">
+                    <content>
+                        <List class="sapUiNoContentPadding">
+                            <StandardListItem
+                                title="PR-2023-00130"
+                                description="Approved - Office furniture"
+                                info="2 hours ago"
+                                type="Active"
+                                icon="sap-icon://accept"
+                                press=".onActivityPress"/>
+                            <StandardListItem
+                                title="PR-2023-00129"
+                                description="Pending approval - Software licenses"
+                                info="4 hours ago"
+                                type="Active"
+                                icon="sap-icon://pending"
+                                press=".onActivityPress"/>
+                            <StandardListItem
+                                title="PR-2023-00128"
+                                description="Completed - Marketing materials"
+                                info="1 day ago"
+                                type="Active"
+                                icon="sap-icon://complete"
+                                press=".onActivityPress"/>
+                        </List>
+                    </content>
+                </Panel>
+                
+                <!-- Getting Started -->
+                <Panel headerText="Getting Started" expandable="true" expanded="false" class="sapUiMediumMarginTop">
+                    <content>
+                        <VBox class="sapUiSmallMargin">
+                            <Text text="Welcome to Procurement Hub! Here's how to get started:" 
+                                  class="sapUiSmallMarginBottom"/>
+                            <HBox class="sapUiSmallMarginBottom">
+                                <StepInput value="1" editable="false" width="50px"/>
+                                <Text text="Navigate to Dashboard for full overview" 
+                                      class="sapUiSmallMarginBegin"/>
+                            </HBox>
+                            <HBox class="sapUiSmallMarginBottom">
+                                <StepInput value="2" editable="false" width="50px"/>
+                                <Text text="Create Purchase Requests for your needs" 
+                                      class="sapUiSmallMarginBegin"/>
+                            </HBox>
+                            <HBox class="sapUiSmallMarginBottom">
+                                <StepInput value="3" editable="false" width="50px"/>
+                                <Text text="Track requests and approvals in real-time" 
+                                      class="sapUiSmallMarginBegin"/>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+                
+            </ScrollContainer>
         </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Text text="Last updated: Today" class="sapUiTinyMarginEnd"/>
+                <Button 
+                    icon="sap-icon://refresh"
+                    tooltip="Refresh"
+                    press=".onRefresh"/>
+            </OverflowToolbar>
+        </footer>
         
     </Page>
     

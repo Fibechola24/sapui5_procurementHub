@@ -1,95 +1,98 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/ui/core/routing/History",
-    "sap/m/MessageToast",
-    "sap/ui/model/json/JSONModel"
-], function(Controller, History, MessageToast, JSONModel) {
-    "use strict";
+  "sap/ui/core/mvc/Controller",
+  "sap/ui/core/routing/History",
+  "sap/m/MessageToast",
+  "sap/ui/model/json/JSONModel"
+], function (Controller, History, MessageToast, JSONModel) {
+  "use strict";
 
-    return Controller.extend("ui5.procurementhub.controller.Dashboard", {
-        
-        onInit: function() {
-            // Mock data for dashboard
-            var oModel = new JSONModel({
-                recentActivities: [
-                    {
-                        title: "PR-2023-00123",
-                        description: "Laptop procurement for new hires",
-                        status: "Approved",
-                        infoState: "Success"
-                    },
-                    {
-                        title: "PR-2023-00124",
-                        description: "Office supplies quarterly order",
-                        status: "Pending",
-                        infoState: "Warning"
-                    },
-                    {
-                        title: "PR-2023-00125",
-                        description: "Software licenses renewal",
-                        status: "Rejected",
-                        infoState: "Error"
-                    },
-                    {
-                        title: "PR-2023-00126",
-                        description: "Marketing campaign materials",
-                        status: "In Progress",
-                        infoState: "Information"
-                    }
-                ]
-            });
-            
-            this.getView().setModel(oModel, "dashboard");
-        },
+  return Controller.extend("ui5.procurementhub.controller.Dashboard", {
 
-        onNavBack: function() {
-            var oHistory = History.getInstance();
-            var sPreviousHash = oHistory.getPreviousHash();
+    onInit: function () {
+      // Mock data for dashboard
+      var oModel = new JSONModel({
+        recentActivities: [
+          {
+            title: "PR-2023-00123",
+            description: "Laptop procurement for new hires",
+            status: "Approved",
+            infoState: "Success"
+          },
+          {
+            title: "PR-2023-00124",
+            description: "Office supplies quarterly order",
+            status: "Pending",
+            infoState: "Warning"
+          },
+          {
+            title: "PR-2023-00125",
+            description: "Software licenses renewal",
+            status: "Rejected",
+            infoState: "Error"
+          },
+          {
+            title: "PR-2023-00126",
+            description: "Marketing campaign materials",
+            status: "In Progress",
+            infoState: "Information"
+          }
+        ]
+      });
 
-            if (sPreviousHash !== undefined) {
-                window.history.go(-1);
-            } else {
-                this.getOwnerComponent().getRouter().navTo("home", {}, true);
-            }
-        },
+      this.getView().setModel(oModel, "dashboard");
+    },
 
-        onRefresh: function() {
-            MessageToast.show("Dashboard refreshed");
-            // In real implementation, refresh data from backend
-        },
+    onNavBack: function () {
+      var oHistory = History.getInstance();
+      var sPreviousHash = oHistory.getPreviousHash();
 
-        onFilter: function() {
-            MessageToast.show("Filter dialog would open here");
-        },
+      if (sPreviousHash !== undefined) {
+        window.history.go(-1);
+      } else {
+        this.getOwnerComponent().getRouter().navTo("home", {}, true);
+      }
+    },
 
-        onCreatePR: function() {
-            this.getOwnerComponent().getRouter().navTo("createPR");
-        },
+    onRefresh: function () {
+      MessageToast.show("Dashboard refreshed");
+      // In real implementation, refresh data from backend
+    },
 
-        onMyPRs: function() {
-            this.getOwnerComponent().getRouter().navTo("myPRs");
-        },
+    onFilter: function () {
+      MessageToast.show("Filter dialog would open here");
+    },
 
-        onApprovals: function() {
-            this.getOwnerComponent().getRouter().navTo("approvals");
-        },
+    onCreatePR: function () {
+      this.getOwnerComponent().getRouter().navTo("createPR");
+    },
 
-        onAnalytics: function() {
-            this.getOwnerComponent().getRouter().navTo("analytics");
-        },
+    onMyPRs: function () {
+      this.getOwnerComponent().getRouter().navTo("myPRs");
+    },
 
-        onSuppliers: function() {
-            this.getOwnerComponent().getRouter().navTo("suppliers");
-        },
+    onApprovals: function () {
+      this.getOwnerComponent().getRouter().navTo("approvals");
+    },
 
-        onSettings: function() {
-            this.getOwnerComponent().getRouter().navTo("settings");
-        },
+    onAnalytics: function () {
+      this.getOwnerComponent().getRouter().navTo("analytics");
+    },
 
-        onActivityPress: function(oEvent) {
-            var sTitle = oEvent.getSource().getTitle();
-            MessageToast.show("Selected: " + sTitle);
-            // In real implementation, navigate to detail view
-        }
-    });
+    onSuppliers: function () {
+      this.getOwnerComponent().getRouter().navTo("suppliers");
+    },
+
+    onSettings: function () {
+      this.getOwnerComponent().getRouter().navTo("settings");
+    },
+
+    onActivityPress: function (oEvent) {
+      var sTitle = oEvent.getSource().getTitle();
+      MessageToast.show("Selected: " + sTitle);
+      // In real implementation, navigate to detail view
+    },
+    onHome: function () {
+      this.getOwnerComponent().getRouter().navTo("home", {}, true);
+    }
+  });
 });
