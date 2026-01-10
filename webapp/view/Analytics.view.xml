@@ -5,9 +5,9 @@
     xmlns:viz="sap.viz.ui5.controls"
     xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
     xmlns:viz.data="sap.viz.ui5.data"
-    xmlns:commons="sap.suite.ui.commons"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
     xmlns:core="sap.ui.core"
-    xmlns:chart="sap.ui.comp.chart"
     controllerName="ui5.procurementhub.controller.Analytics"
     displayBlock="true">
     
@@ -78,101 +78,109 @@
                     </content>
                 </Panel>
                 
-                <!-- KPI Overview Cards -->
+                <!-- KPI Overview Cards - FIXED: Using sap.f.Card instead of HeaderContainer -->
                 <Panel headerText="Key Metrics" class="sapUiNoContentPadding sapUiMediumMarginBottom">
                     <content>
                         <HBox class="sapUiSmallMargin" wrap="Wrap" justifyContent="SpaceBetween">
                             <!-- Total Spend Card -->
-                            <commons:HeaderContainer scrollStep="200" class="sapUiTinyMargin" width="300px">
-                                <VBox class="sapUiSmallPadding">
-                                    <HBox justifyContent="SpaceBetween">
-                                        <VBox>
-                                            <Title text="Total Spend" level="H3" class="sapUiTinyMarginBottom"/>
-                                            <HBox alignItems="End">
-                                                <Title text="{analytics>/kpis/totalSpend/value}" level="H1"/>
-                                                <Text text="{analytics>/kpis/totalSpend/unit}" class="sapUiSmallMarginBegin"/>
-                                            </HBox>
-                                            <ObjectStatus 
-                                                text="{analytics>/kpis/totalSpend/trend}"
-                                                state="{analytics>/kpis/totalSpend/trendState}"
-                                                class="sapUiTinyMarginTop"/>
-                                        </VBox>
-                                        <core:Icon 
-                                            src="sap-icon://money-bills"
-                                            size="3rem"
-                                            color="#0070F2"/>
-                                    </HBox>
-                                </VBox>
-                            </commons:HeaderContainer>
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Total Spend"
+                                        subtitle="Current Period"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <HBox alignItems="End" justifyContent="SpaceBetween">
+                                            <Title text="{analytics>/kpis/totalSpend/value}" level="H1" class="sapUiTinyMarginBottom"/>
+                                            <core:Icon 
+                                                src="sap-icon://money-bills"
+                                                size="2rem"
+                                                color="#0070F2"/>
+                                        </HBox>
+                                        <Text text="{analytics>/kpis/totalSpend/unit}" class="sapUiTinyMarginTop"/>
+                                        <ObjectStatus 
+                                            text="{analytics>/kpis/totalSpend/trend}"
+                                            state="{analytics>/kpis/totalSpend/trendState}"
+                                            class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
                             
                             <!-- Average Processing Time -->
-                            <commons:HeaderContainer scrollStep="200" class="sapUiTinyMargin" width="300px">
-                                <VBox class="sapUiSmallPadding">
-                                    <HBox justifyContent="SpaceBetween">
-                                        <VBox>
-                                            <Title text="Avg. Processing Time" level="H3" class="sapUiTinyMarginBottom"/>
-                                            <HBox alignItems="End">
-                                                <Title text="{analytics>/kpis/avgProcessingTime/value}" level="H1"/>
-                                                <Text text="{analytics>/kpis/avgProcessingTime/unit}" class="sapUiSmallMarginBegin"/>
-                                            </HBox>
-                                            <ObjectStatus 
-                                                text="{analytics>/kpis/avgProcessingTime/trend}"
-                                                state="{analytics>/kpis/avgProcessingTime/trendState}"
-                                                class="sapUiTinyMarginTop"/>
-                                        </VBox>
-                                        <core:Icon 
-                                            src="sap-icon://time-entry-request"
-                                            size="3rem"
-                                            color="#19A979"/>
-                                    </HBox>
-                                </VBox>
-                            </commons:HeaderContainer>
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Avg. Processing Time"
+                                        subtitle="Days to Approval"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <HBox alignItems="End" justifyContent="SpaceBetween">
+                                            <Title text="{analytics>/kpis/avgProcessingTime/value}" level="H1" class="sapUiTinyMarginBottom"/>
+                                            <core:Icon 
+                                                src="sap-icon://time-entry-request"
+                                                size="2rem"
+                                                color="#19A979"/>
+                                        </HBox>
+                                        <Text text="{analytics>/kpis/avgProcessingTime/unit}" class="sapUiTinyMarginTop"/>
+                                        <ObjectStatus 
+                                            text="{analytics>/kpis/avgProcessingTime/trend}"
+                                            state="{analytics>/kpis/avgProcessingTime/trendState}"
+                                            class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
                             
                             <!-- Approval Rate -->
-                            <commons:HeaderContainer scrollStep="200" class="sapUiTinyMargin" width="300px">
-                                <VBox class="sapUiSmallPadding">
-                                    <HBox justifyContent="SpaceBetween">
-                                        <VBox>
-                                            <Title text="Approval Rate" level="H3" class="sapUiTinyMarginBottom"/>
-                                            <HBox alignItems="End">
-                                                <Title text="{analytics>/kpis/approvalRate/value}" level="H1"/>
-                                                <Text text="{analytics>/kpis/approvalRate/unit}" class="sapUiSmallMarginBegin"/>
-                                            </HBox>
-                                            <ObjectStatus 
-                                                text="{analytics>/kpis/approvalRate/trend}"
-                                                state="{analytics>/kpis/approvalRate/trendState}"
-                                                class="sapUiTinyMarginTop"/>
-                                        </VBox>
-                                        <core:Icon 
-                                            src="sap-icon://approvals"
-                                            size="3rem"
-                                            color="#E39B1A"/>
-                                    </HBox>
-                                </VBox>
-                            </commons:HeaderContainer>
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Approval Rate"
+                                        subtitle="Successful Approvals"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <HBox alignItems="End" justifyContent="SpaceBetween">
+                                            <Title text="{analytics>/kpis/approvalRate/value}" level="H1" class="sapUiTinyMarginBottom"/>
+                                            <core:Icon 
+                                                src="sap-icon://approvals"
+                                                size="2rem"
+                                                color="#E39B1A"/>
+                                        </HBox>
+                                        <Text text="{analytics>/kpis/approvalRate/unit}" class="sapUiTinyMarginTop"/>
+                                        <ObjectStatus 
+                                            text="{analytics>/kpis/approvalRate/trend}"
+                                            state="{analytics>/kpis/approvalRate/trendState}"
+                                            class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
                             
                             <!-- Cost Savings -->
-                            <commons:HeaderContainer scrollStep="200" class="sapUiTinyMargin" width="300px">
-                                <VBox class="sapUiSmallPadding">
-                                    <HBox justifyContent="SpaceBetween">
-                                        <VBox>
-                                            <Title text="Cost Savings" level="H3" class="sapUiTinyMarginBottom"/>
-                                            <HBox alignItems="End">
-                                                <Title text="{analytics>/kpis/costSavings/value}" level="H1"/>
-                                                <Text text="{analytics>/kpis/costSavings/unit}" class="sapUiSmallMarginBegin"/>
-                                            </HBox>
-                                            <ObjectStatus 
-                                                text="{analytics>/kpis/costSavings/trend}"
-                                                state="{analytics>/kpis/costSavings/trendState}"
-                                                class="sapUiTinyMarginTop"/>
-                                        </VBox>
-                                        <core:Icon 
-                                            src="sap-icon://savings"
-                                            size="3rem"
-                                            color="#36CE6C"/>
-                                    </HBox>
-                                </VBox>
-                            </commons:HeaderContainer>
+                            <f:Card width="300px" class="sapUiSmallMargin">
+                                <f:header>
+                                    <card:Header 
+                                        title="Cost Savings"
+                                        subtitle="This Period"/>
+                                </f:header>
+                                <f:content>
+                                    <layout:VerticalLayout class="sapUiContentPadding">
+                                        <HBox alignItems="End" justifyContent="SpaceBetween">
+                                            <Title text="{analytics>/kpis/costSavings/value}" level="H1" class="sapUiTinyMarginBottom"/>
+                                            <core:Icon 
+                                                src="sap-icon://savings"
+                                                size="2rem"
+                                                color="#36CE6C"/>
+                                        </HBox>
+                                        <Text text="{analytics>/kpis/costSavings/unit}" class="sapUiTinyMarginTop"/>
+                                        <ObjectStatus 
+                                            text="{analytics>/kpis/costSavings/trend}"
+                                            state="{analytics>/kpis/costSavings/trendState}"
+                                            class="sapUiTinyMarginTop"/>
+                                    </layout:VerticalLayout>
+                                </f:content>
+                            </f:Card>
                         </HBox>
                     </content>
                 </Panel>
@@ -182,74 +190,31 @@
                     <!-- Monthly Spend Trend -->
                     <Panel headerText="Monthly Spend Trend" width="600px" height="400px" class="sapUiTinyMargin">
                         <content>
-                            <viz:VizFrame 
-                                id="monthlySpendChart"
-                                uiConfig="{applicationSet:'fiori'}"
-                                height="100%"
-                                width="100%"
-                                vizType="column">
-                                <viz:dataset>
-                                    <viz.data:FlattenedDataset data="{analytics>/monthlySpend}">
-                                        <viz.data:dimensions>
-                                            <viz.data:DimensionDefinition 
-                                                name="Month"
-                                                value="{analytics>month}"/>
-                                        </viz.data:dimensions>
-                                        <viz.data:measures>
-                                            <viz.data:MeasureDefinition 
-                                                name="Spend"
-                                                value="{analytics>amount}"/>
-                                        </viz.data:measures>
-                                    </viz.data:FlattenedDataset>
-                                </viz:dataset>
-                                <viz:feeds>
-                                    <viz.feeds:FeedItem 
-                                        uid="valueAxis"
-                                        type="Measure"
-                                        values="Spend"/>
-                                    <viz.feeds:FeedItem 
-                                        uid="categoryAxis"
-                                        type="Dimension"
-                                        values="Month"/>
-                                </viz:feeds>
-                            </viz:VizFrame>
+                            <!-- Using simple visualization or alternative to viz charts -->
+                            <VBox height="100%" width="100%" alignItems="Center" justifyContent="Center">
+                                <Image src="sap-icon://chart-axis" decorative="true" width="60px" height="60px" 
+                                       class="sapUiMediumMargin"/>
+                                <Text text="Monthly Spend Chart" class="sapUiSmallMargin"/>
+                                <Text text="(Chart visualization would appear here)" class="sapUiTinyMargin sapUiSmallText"/>
+                                <Button text="Show Chart Data" press=".onShowMonthlySpend" class="sapUiTinyMarginTop"/>
+                            </VBox>
                         </content>
                     </Panel>
                     
                     <!-- Spend by Department -->
                     <Panel headerText="Spend by Department" width="600px" height="400px" class="sapUiTinyMargin">
                         <content>
-                            <viz:VizFrame 
-                                id="departmentSpendChart"
-                                uiConfig="{applicationSet:'fiori'}"
-                                height="100%"
-                                width="100%"
-                                vizType="pie">
-                                <viz:dataset>
-                                    <viz.data:FlattenedDataset data="{analytics>/departmentSpend}">
-                                        <viz.data:dimensions>
-                                            <viz.data:DimensionDefinition 
-                                                name="Department"
-                                                value="{analytics>department}"/>
-                                        </viz.data:dimensions>
-                                        <viz.data:measures>
-                                            <viz.data:MeasureDefinition 
-                                                name="Spend"
-                                                value="{analytics>amount}"/>
-                                        </viz.data:measures>
-                                    </viz.data:FlattenedDataset>
-                                </viz:dataset>
-                                <viz:feeds>
-                                    <viz.feeds:FeedItem 
-                                        uid="color"
-                                        type="Dimension"
-                                        values="Department"/>
-                                    <viz.feeds:FeedItem 
-                                        uid="value"
-                                        type="Measure"
-                                        values="Spend"/>
-                                </viz:feeds>
-                            </viz:VizFrame>
+                            <!-- Using List instead of Pie Chart for compatibility -->
+                            <List 
+                                items="{analytics>/departmentSpend}"
+                                class="sapUiNoContentPadding">
+                                <StandardListItem
+                                    title="{analytics>department}"
+                                    description="Spend: ${analytics>amount}"
+                                    info="{analytics>percentage}"
+                                    infoState="Success"
+                                    type="Active"/>
+                            </List>
                         </content>
                     </Panel>
                 </HBox>
@@ -259,106 +224,133 @@
                     <!-- PR Status Distribution -->
                     <Panel headerText="PR Status Distribution" width="600px" height="400px" class="sapUiTinyMargin">
                         <content>
-                            <viz:VizFrame 
-                                id="prStatusChart"
-                                uiConfig="{applicationSet:'fiori'}"
-                                height="100%"
-                                width="100%"
-                                vizType="donut">
-                                <viz:dataset>
-                                    <viz.data:FlattenedDataset data="{analytics>/prStatus}">
-                                        <viz.data:dimensions>
-                                            <viz.data:DimensionDefinition 
-                                                name="Status"
-                                                value="{analytics>status}"/>
-                                        </viz.data:dimensions>
-                                        <viz.data:measures>
-                                            <viz.data:MeasureDefinition 
-                                                name="Count"
-                                                value="{analytics>count}"/>
-                                        </viz.data:measures>
-                                    </viz.data:FlattenedDataset>
-                                </viz:dataset>
-                                <viz:feeds>
-                                    <viz.feeds:FeedItem 
-                                        uid="color"
-                                        type="Dimension"
-                                        values="Status"/>
-                                    <viz.feeds:FeedItem 
-                                        uid="value"
-                                        type="Measure"
-                                        values="Count"/>
-                                </viz:feeds>
-                            </viz:VizFrame>
+                            <VBox height="100%" width="100%" class="sapUiSmallPadding">
+                                <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+                                    <ObjectStatus 
+                                        text="Approved"
+                                        state="Success"
+                                        icon="sap-icon://accept"/>
+                                    <Text text="{analytics>/prStatus/0/count} PRs"/>
+                                </HBox>
+                                <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+                                    <ObjectStatus 
+                                        text="Pending"
+                                        state="Warning"
+                                        icon="sap-icon://pending"/>
+                                    <Text text="{analytics>/prStatus/1/count} PRs"/>
+                                </HBox>
+                                <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+                                    <ObjectStatus 
+                                        text="Rejected"
+                                        state="Error"
+                                        icon="sap-icon://decline"/>
+                                    <Text text="{analytics>/prStatus/2/count} PRs"/>
+                                </HBox>
+                                <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+                                    <ObjectStatus 
+                                        text="Draft"
+                                        state="None"
+                                        icon="sap-icon://create"/>
+                                    <Text text="{analytics>/prStatus/3/count} PRs"/>
+                                </HBox>
+                            </VBox>
                         </content>
                     </Panel>
                     
                     <!-- Top Suppliers -->
-                    <Panel headerText="Top 5 Suppliers" width="600px" height="400px" class="sapUiTinyMargin">
+                    <Panel headerText="Top Suppliers by Spend" width="600px" height="400px" class="sapUiTinyMargin">
                         <content>
-                            <viz:VizFrame 
-                                id="topSuppliersChart"
-                                uiConfig="{applicationSet:'fiori'}"
-                                height="100%"
-                                width="100%"
-                                vizType="bar">
-                                <viz:dataset>
-                                    <viz.data:FlattenedDataset data="{analytics>/topSuppliers}">
-                                        <viz.data:dimensions>
-                                            <viz.data:DimensionDefinition 
-                                                name="Supplier"
-                                                value="{analytics>supplier}"/>
-                                        </viz.data:dimensions>
-                                        <viz.data:measures>
-                                            <viz.data:MeasureDefinition 
-                                                name="Spend"
-                                                value="{analytics>amount}"/>
-                                        </viz.data:measures>
-                                    </viz.data:FlattenedDataset>
-                                </viz:dataset>
-                                <viz:feeds>
-                                    <viz.feeds:FeedItem 
-                                        uid="valueAxis"
-                                        type="Measure"
-                                        values="Spend"/>
-                                    <viz.feeds:FeedItem 
-                                        uid="categoryAxis"
-                                        type="Dimension"
-                                        values="Supplier"/>
-                                </viz:feeds>
-                            </viz:VizFrame>
+                            <Table 
+                                items="{analytics>/topSuppliers}"
+                                class="sapUiNoContentPadding">
+                                <columns>
+                                    <Column>
+                                        <Text text="Supplier"/>
+                                    </Column>
+                                    <Column width="120px">
+                                        <Text text="Spend"/>
+                                    </Column>
+                                    <Column width="80px">
+                                        <Text text="%"/>
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{analytics>supplier}"/>
+                                            <ObjectNumber 
+                                                number="{analytics>amount}"
+                                                unit="USD"
+                                                state="Success"/>
+                                            <ProgressIndicator 
+                                                percentValue="{analytics>percentage}"
+                                                displayValue="{analytics>percentage}%"
+                                                showValue="true"
+                                                state="Success"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
                         </content>
                     </Panel>
                 </HBox>
                 
-                <!-- Process Timeline -->
-                <Panel headerText="Processing Timeline" class="sapUiMediumMarginBottom">
+                <!-- Process Timeline - Simplified -->
+                <Panel headerText="Procurement Process Timeline" class="sapUiMediumMarginBottom">
                     <content>
-                        <commons:ProcessFlow 
-                            id="processFlow"
-                            nodes="{analytics>/processNodes}"
-                            lanes="{analytics>/processLanes}"
-                            height="250px">
-                            <commons:nodes>
-                                <commons:ProcessFlowNode 
-                                    laneId="{analytics>lane}"
-                                    nodeId="{analytics>id}"
-                                    title="{analytics>title}"
-                                    titleAbbreviation="{analytics>abbr}"
-                                    children="{analytics>children}"
-                                    state="{analytics>state}"
-                                    stateText="{analytics>stateText}"
-                                    texts="{analytics>texts}"
-                                    highlighted="{analytics>highlighted}"/>
-                            </commons:nodes>
-                            <commons:lanes>
-                                <commons:ProcessFlowLane 
-                                    laneId="{analytics>id}"
-                                    icon="{analytics>icon}"
-                                    text="{analytics>text}"
-                                    position="{analytics>position}"/>
-                            </commons:lanes>
-                        </commons:ProcessFlow>
+                        <VBox class="sapUiSmallMargin">
+                            <HBox class="sapUiSmallMarginBottom" alignItems="Center">
+                                <ObjectStatus 
+                                    state="Success"
+                                    icon="sap-icon://create"
+                                    class="sapUiTinyMarginEnd"/>
+                                <VBox class="sapUiTinyMarginBegin">
+                                    <Title text="PR Creation" level="H4"/>
+                                    <Text text="Purchase request created and submitted"/>
+                                </VBox>
+                                <ToolbarSpacer/>
+                                <Text text="Step 1 of 4" class="sapUiTinyMarginEnd"/>
+                            </HBox>
+                            
+                            <HBox class="sapUiSmallMarginBottom" alignItems="Center">
+                                <ObjectStatus 
+                                    state="Success"
+                                    icon="sap-icon://manager"
+                                    class="sapUiTinyMarginEnd"/>
+                                <VBox class="sapUiTinyMarginBegin">
+                                    <Title text="Manager Review" level="H4"/>
+                                    <Text text="Department manager review and approval"/>
+                                </VBox>
+                                <ToolbarSpacer/>
+                                <Text text="Step 2 of 4" class="sapUiTinyMarginEnd"/>
+                            </HBox>
+                            
+                            <HBox class="sapUiSmallMarginBottom" alignItems="Center">
+                                <ObjectStatus 
+                                    state="Warning"
+                                    icon="sap-icon://payment-approval"
+                                    class="sapUiTinyMarginEnd"/>
+                                <VBox class="sapUiTinyMarginBegin">
+                                    <Title text="Finance Approval" level="H4"/>
+                                    <Text text="Finance department budget approval"/>
+                                </VBox>
+                                <ToolbarSpacer/>
+                                <Text text="Step 3 of 4" class="sapUiTinyMarginEnd"/>
+                            </HBox>
+                            
+                            <HBox class="sapUiSmallMarginBottom" alignItems="Center">
+                                <ObjectStatus 
+                                    state="None"
+                                    icon="sap-icon://shipping-status"
+                                    class="sapUiTinyMarginEnd"/>
+                                <VBox class="sapUiTinyMarginBegin">
+                                    <Title text="PO Generation" level="H4"/>
+                                    <Text text="Purchase order generation and supplier dispatch"/>
+                                </VBox>
+                                <ToolbarSpacer/>
+                                <Text text="Step 4 of 4" class="sapUiTinyMarginEnd"/>
+                            </HBox>
+                        </VBox>
                     </content>
                 </Panel>
                 

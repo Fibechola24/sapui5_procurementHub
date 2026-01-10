@@ -19,6 +19,11 @@ sap.ui.define([
                     case "IN_PROGRESS": return "Information";
                     default: return "None";
                 }
+            },
+            
+            formatCurrency: function(amount) {
+                if (amount === undefined || amount === null) return "$0";
+                return "$" + parseInt(amount).toLocaleString();
             }
         },
 
@@ -26,9 +31,6 @@ sap.ui.define([
             // Initialize analytics model with sample data
             var oModel = new JSONModel(this._generateAnalyticsData());
             this.getView().setModel(oModel, "analytics");
-            
-            // Store chart references for later updates
-            this._charts = {};
         },
 
         _generateAnalyticsData: function() {
@@ -70,56 +72,12 @@ sap.ui.define([
                 departmentSpend: this._generateDepartmentSpendData(),
                 prStatus: this._generatePRStatusData(),
                 topSuppliers: this._generateTopSuppliersData(),
-                transactions: this._generateTransactionData(),
-                
-                processNodes: [
-                    {
-                        id: "node1",
-                        lane: "lane1",
-                        title: "PR Created",
-                        abbr: "CR",
-                        state: "Positive",
-                        stateText: "Completed"
-                    },
-                    {
-                        id: "node2", 
-                        lane: "lane1",
-                        title: "Manager Review",
-                        abbr: "MR",
-                        state: "Positive",
-                        stateText: "Completed"
-                    },
-                    {
-                        id: "node3",
-                        lane: "lane1", 
-                        title: "Finance Approval",
-                        abbr: "FA",
-                        state: "Positive",
-                        stateText: "Completed"
-                    },
-                    {
-                        id: "node4",
-                        lane: "lane1",
-                        title: "PO Generation", 
-                        abbr: "PO",
-                        state: "Planned",
-                        stateText: "Next Step"
-                    }
-                ],
-                
-                processLanes: [
-                    {
-                        id: "lane1",
-                        icon: "sap-icon://business-objects-experience",
-                        text: "Standard Procurement Process",
-                        position: 1
-                    }
-                ]
+                transactions: this._generateTransactionData()
             };
         },
 
         _generateMonthlySpendData: function() {
-            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
             var data = [];
             
             for (var i = 0; i < 6; i++) {
@@ -134,13 +92,21 @@ sap.ui.define([
 
         _generateDepartmentSpendData: function() {
             var departments = ["IT", "Marketing", "HR", "Finance", "Operations", "Sales", "R&D"];
+            var total = 0;
             var data = [];
             
             departments.forEach(dept => {
+                var amount = Math.floor(Math.random() * 40000) + 10000;
+                total += amount;
                 data.push({
                     department: dept,
-                    amount: Math.floor(Math.random() * 40000) + 10000
+                    amount: amount
                 });
+            });
+            
+            // Calculate percentages
+            data.forEach(item => {
+                item.percentage = Math.round((item.amount / total) * 100);
             });
             
             return data;
@@ -158,13 +124,21 @@ sap.ui.define([
 
         _generateTopSuppliersData: function() {
             var suppliers = ["Tech Supplies Inc.", "Office Solutions Co.", "Global Electronics", "Supply Chain Partners", "Innovative Materials"];
+            var total = 0;
             var data = [];
             
             suppliers.forEach(supplier => {
+                var amount = Math.floor(Math.random() * 50000) + 20000;
+                total += amount;
                 data.push({
                     supplier: supplier,
-                    amount: Math.floor(Math.random() * 50000) + 20000
+                    amount: amount
                 });
+            });
+            
+            // Calculate percentages
+            data.forEach(item => {
+                item.percentage = Math.round((item.amount / total) * 100);
             });
             
             return data;
@@ -275,26 +249,8 @@ sap.ui.define([
             });
         },
 
-        onAfterRendering: function() {
-            // Initialize charts if needed
-            this._initializeCharts();
-        },
-
-        _initializeCharts: function() {
-            // Store references to chart controls for programmatic updates
-            var oView = this.getView();
-            this._charts = {
-                monthlySpend: oView.byId("monthlySpendChart"),
-                departmentSpend: oView.byId("departmentSpendChart"),
-                prStatus: oView.byId("prStatusChart"),
-                topSuppliers: oView.byId("topSuppliersChart"),
-                processFlow: oView.byId("processFlow")
-            };
-        },
-
-        onExit: function() {
-            // Clean up chart references
-            this._charts = null;
+        onShowMonthlySpend: function() {
+            MessageBox.information("Monthly spend chart visualization would appear here with interactive data.");
         }
     });
 });
