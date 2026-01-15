@@ -1,21 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <mvc:View
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
-    displayBlock="true"
+    xmlns:layout="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
     controllerName="ui5.procurementhub.controller.Approvals"
-    height="100%">
+    displayBlock="true">
     
     <Page 
+        id="approvalsPage"
         title="Approvals Inbox"
         showNavButton="true"
-        navButtonPress=".onNavBack">
+        navButtonPress=".onNavBack"
+        class="sapUiResponsiveContentPadding">
+        
+        <headerContent>
+            <Button 
+                icon="sap-icon://refresh"
+                tooltip="Refresh"
+                press=".onRefresh"/>
+            <Button 
+                icon="sap-icon://multi-select"
+                tooltip="Select Multiple"
+                press=".onToggleMultiSelect"/>
+            <Button 
+                icon="sap-icon://filter"
+                tooltip="Filter"
+                press=".onOpenFilter"/>
+            <Button 
+                icon="sap-icon://action-settings"
+                tooltip="Approval Settings"
+                press=".onApprovalSettings"/>
+        </headerContent>
+        
         <content>
-            <MessageStrip
-                text="Approvals page will be implemented in future phase"
-                type="Information"
-                showIcon="true"
-                class="sapUiMediumMargin"/>
+            <VBox height="100%">
+                <!-- Approval Stats -->
+                <Panel headerText="Approval Summary" expandable="true" expanded="true" 
+                       class="sapUiNoContentPadding sapUiMediumMarginBottom">
+                    <content>
+                        <HBox class="sapUiSmallMargin" wrap="Wrap" justifyContent="SpaceBetween">
+                            <VBox alignItems="Center" class="sapUiSmallMargin" width="200px">
+                                <ObjectStatus 
+                                    text="Urgent"
+                                    state="Error"
+                                    icon="sap-icon://alert"
+                                    class="sapUiTinyMarginBottom"/>
+                                <Title text="5" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Text text="High Priority Items"/>
+                                <Button 
+                                    text="View Urgent"
+                                    type="Emphasized"
+                                    press=".onViewUrgent"
+                                    class="sapUiTinyMarginTop"/>
+                            </VBox>
+                            
+                            <VBox alignItems="Center" class="sapUiSmallMargin" width="200px">
+                                <ObjectStatus 
+                                    text="Pending"
+                                    state="Warning"
+                                    icon="sap-icon://pending"
+                                    class="sapUiTinyMarginBottom"/>
+                                <Title text="23" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Text text="Awaiting Your Action"/>
+                                <Button 
+                                    text="View All"
+                                    type="Default"
+                                    press=".onViewAll"
+                                    class="sapUiTinyMarginTop"/>
+                            </VBox>
+                            
+                            <VBox alignItems="Center" class="sapUiSmallMargin" width="200px">
+                                <ObjectStatus 
+                                    text="Overdue"
+                                    state="Error"
+                                    icon="sap-icon://time-overtime"
+                                    class="sapUiTinyMarginBottom"/>
+                                <Title text="3" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Text text="Past Due Date"/>
+                                <Button 
+                                    text="View Overdue"
+                                    type="Reject"
+                                    press=".onViewOverdue"
+                                    class="sapUiTinyMarginTop"/>
+                            </VBox>
+                            
+                            <VBox alignItems="Center" class="sapUiSmallMargin" width="200px">
+                                <ObjectStatus 
+                                    text="Delegated"
+                                    state="Information"
+                                    icon="sap-icon://user"
+                                    class="sapUiTinyMarginBottom"/>
+                                <Title text="7" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Text text="Assigned to Others"/>
+                                <Button 
+                                    text="View Delegated"
+                                    type="Transparent"
+                                    press=".onViewDelegated"
+                                    class="sapUiTinyMarginTop"/>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+                
+                <!-- Approvals Table -->
+                <Panel headerText="Pending Approvals" expandable="true" expanded="true" 
+                       class="sapUiNoContentPadding" height="100%">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Approval Requests ({= ${approvals>/pendingApprovals}.length })" level="H2"/>
+                            <ToolbarSpacer/>
+                            <SearchField 
+                                id="searchField"
+                                width="20rem"
+                                placeholder="Search approvals..."
+                                search=".onSearch"
+                                liveChange=".onLiveSearch"/>
+                            <Button 
+                                icon="sap-icon://sort"
+                                press=".onOpenSort"/>
+                            <Button 
+                                icon="sap-icon://group-2"
+                                press=".onGroupBy"/>
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    
+                    <content>
+                        <Table 
+                            id="approvalsTable"
+                            items="{
+                                path: 'approvals>/pendingApprovals',
+                                sorter: {
+                                    path: 'priority',
+                                    descending: true,
+                                    group: true
+                                }
+                            }"
+                            mode="SingleSelectMaster"
+                            selectionChange=".onSelectionChange"
+                            updateFinished=".onUpdateFinished"
+                            growing="true"
+                            growingThreshold="20"
+                            sticky="ColumnHeaders">
+                            
+                            <columns>
+                                <Column width="12em">
+                                    <Text text="PR Number"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Description"/>
+                                </Column>
+                                <Column width="8em">
+                                    <Text text="Priority"/>
+                                </Column>
+                                <Column width="8em">
+                                    <Text text="Amount"/>
+                                </Column>
+                                <Column width="10em">
+                                    <Text text="Requestor"/>
+                                </Column>
+                                <Column width="10em">
+                                    <Text text="Submitted"/>
+                                </Column>
+                                <Column width="10em">
+                                    <Text text="Due By"/>
+                                </Column>
+                                <Column width="8em">
+                                    <Text text="Days Left"/>
+                                </Column>
+                                <Column width="12em">
+                                    <Text text="Actions"/>
+                                </Column>
+                            </columns>
+                            
+                            <items>
+                                <ColumnListItem 
+                                    type="Active"
+                                    press=".onItemPress"
+                                    highlight="{
+                                        path: 'approvals>priority',
+                                        formatter: '.formatter.priorityHighlight'
+                                    }">
+                                    <cells>
+                                        <ObjectIdentifier
+                                            title="{approvals>prNumber}"
+                                            text="{approvals>department}"/>
+                                        <VBox>
+                                            <Text text="{approvals>description}" wrapping="true"/>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <core:Icon 
+                                                    src="sap-icon://attachment"
+                                                    size="0.75rem"
+                                                    color="#6a6d70"
+                                                    class="sapUiTinyMarginEnd"/>
+                                                <Text text="{approvals>attachments} attachments" 
+                                                      class="sapUiTinyFontSize"/>
+                                            </HBox>
+                                        </VBox>
+                                        <ObjectStatus 
+                                            text="{approvals>priority}"
+                                            state="{
+                                                path: 'approvals>priority',
+                                                formatter: '.formatter.priorityState'
+                                            }"
+                                            icon="{
+                                                path: 'approvals>priority',
+                                                formatter: '.formatter.priorityIcon'
+                                            }"/>
+                                        <ObjectNumber 
+                                            number="{approvals>amount}"
+                                            unit="USD"
+                                            state="Success"
+                                            emphasized="false"/>
+                                        <VBox>
+                                            <Text text="{approvals>requestor}"/>
+                                            <Text text="{approvals>requestorTitle}" 
+                                                  class="sapUiTinyMarginTop sapUiTinyFontSize"/>
+                                        </VBox>
+                                        <Text text="{
+                                            path: 'approvals>submittedDate',
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                                style: 'short'
+                                            }
+                                        }"/>
+                                        <HBox alignItems="Center">
+                                            <Text text="{
+                                                path: 'approvals>dueDate',
+                                                type: 'sap.ui.model.type.Date',
+                                                formatOptions: {
+                                                    style: 'medium'
+                                                }
+                                            }"/>
+                                            <core:Icon 
+                                                src="sap-icon://calendar"
+                                                size="1rem"
+                                                class="sapUiTinyMarginBegin"
+                                                color="{
+                                                    path: 'approvals>dueStatus',
+                                                    formatter: '.formatter.dueDateColor'
+                                                }"/>
+                                        </HBox>
+                                        <ObjectStatus 
+                                            text="{approvals>daysLeft}"
+                                            state="{
+                                                path: 'approvals>dueStatus',
+                                                formatter: '.formatter.dueStatusState'
+                                            }"/>
+                                        <HBox>
+                                            <Button 
+                                                text="Approve"
+                                                type="Accept"
+                                                icon="sap-icon://accept"
+                                                press=".onApprove"
+                                                class="sapUiTinyMarginEnd"
+                                                enabled="{= ${approvals>canApprove} === true }"/>
+                                            <Button 
+                                                text="Reject"
+                                                type="Reject"
+                                                icon="sap-icon://decline"
+                                                press=".onReject"
+                                                enabled="{= ${approvals>canApprove} === true }"/>
+                                            <Button 
+                                                icon="sap-icon://comment"
+                                                type="Transparent"
+                                                tooltip="Add Comment"
+                                                press=".onAddComment"/>
+                                        </HBox>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+                
+                <!-- Bulk Actions Panel -->
+                <Panel headerText="Bulk Actions" expandable="true" expanded="false" 
+                       class="sapUiMediumMarginTop" visible="false" id="bulkActionsPanel">
+                    <content>
+                        <HBox class="sapUiSmallMargin" alignItems="Center" wrap="Wrap">
+                            <Text text="Selected Items: " class="sapUiTinyMarginEnd"/>
+                            <ObjectStatus 
+                                text="0"
+                                state="Information"
+                                id="selectedCount"/>
+                            <ToolbarSpacer/>
+                            <Button 
+                                text="Approve Selected"
+                                type="Accept"
+                                icon="sap-icon://accept"
+                                press=".onBulkApprove"
+                                class="sapUiTinyMarginEnd"/>
+                            <Button 
+                                text="Reject Selected"
+                                type="Reject"
+                                icon="sap-icon://decline"
+                                press=".onBulkReject"
+                                class="sapUiTinyMarginEnd"/>
+                            <Button 
+                                text="Delegate Selected"
+                                type="Default"
+                                icon="sap-icon://user"
+                                press=".onBulkDelegate"/>
+                        </HBox>
+                    </content>
+                </Panel>
+                
+                <!-- Approval History -->
+                <Panel headerText="Recent Approval History" expandable="true" expanded="false" 
+                       class="sapUiMediumMarginTop">
+                    <content>
+                        <List 
+                            items="{approvals>/recentHistory}"
+                            class="sapUiNoContentPadding">
+                            <CustomListItem>
+                                <HBox alignItems="Center" class="sapUiSmallMargin">
+                                    <VBox class="sapUiTinyMarginEnd">
+                                        <ObjectStatus 
+                                            state="Success"
+                                            icon="sap-icon://accept"
+                                            class="sapUiTinyMarginBottom"/>
+                                    </VBox>
+                                    <VBox class="sapUiSmallMarginBegin">
+                                        <Title text="{approvals>prNumber}" level="H4"/>
+                                        <Text text="Approved by {approvals>approver} on {approvals>approvalDate}"/>
+                                        <Text text="Comment: {approvals>comment}" 
+                                              class="sapUiTinyMarginTop sapUiTinyFontSize"/>
+                                    </VBox>
+                                    <ToolbarSpacer/>
+                                    <Button 
+                                        icon="sap-icon://display"
+                                        tooltip="View Details"
+                                        type="Transparent"
+                                        press=".onViewHistoryDetails"/>
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                    </content>
+                </Panel>
+            </VBox>
         </content>
+        
+        <footer>
+            <OverflowToolbar>
+                <ToggleButton 
+                    id="multiSelectToggle"
+                    icon="sap-icon://multi-select"
+                    text="Multi-Select Mode"
+                    press=".onToggleMultiSelect"/>
+                <ToolbarSpacer/>
+                <Button 
+                    text="Delegate All"
+                    icon="sap-icon://user"
+                    press=".onDelegateAll"/>
+                <Button 
+                    type="Reject"
+                    text="Reject All"
+                    icon="sap-icon://decline"
+                    press=".onRejectAll"/>
+                <Button 
+                    type="Emphasized"
+                    text="Approve All"
+                    icon="sap-icon://accept"
+                    press=".onApproveAll"/>
+            </OverflowToolbar>
+        </footer>
+        
     </Page>
     
 </mvc:View>
