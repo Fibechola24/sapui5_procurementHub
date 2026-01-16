@@ -4,7 +4,6 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:layout="sap.ui.layout"
     xmlns:core="sap.ui.core"
-    xmlns:table="sap.ui.table"
     controllerName="ui5.procurementhub.controller.Approvals"
     displayBlock="true">
     
@@ -47,7 +46,7 @@
                                     state="Error"
                                     icon="sap-icon://alert"
                                     class="sapUiTinyMarginBottom"/>
-                                <Title text="5" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Title text="{approvals>/stats/urgentCount}" level="H2" class="sapUiTinyMarginBottom"/>
                                 <Text text="High Priority Items"/>
                                 <Button 
                                     text="View Urgent"
@@ -62,7 +61,7 @@
                                     state="Warning"
                                     icon="sap-icon://pending"
                                     class="sapUiTinyMarginBottom"/>
-                                <Title text="23" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Title text="{approvals>/stats/totalPending}" level="H2" class="sapUiTinyMarginBottom"/>
                                 <Text text="Awaiting Your Action"/>
                                 <Button 
                                     text="View All"
@@ -77,7 +76,7 @@
                                     state="Error"
                                     icon="sap-icon://time-overtime"
                                     class="sapUiTinyMarginBottom"/>
-                                <Title text="3" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Title text="{approvals>/stats/overdueCount}" level="H2" class="sapUiTinyMarginBottom"/>
                                 <Text text="Past Due Date"/>
                                 <Button 
                                     text="View Overdue"
@@ -92,7 +91,7 @@
                                     state="Information"
                                     icon="sap-icon://user"
                                     class="sapUiTinyMarginBottom"/>
-                                <Title text="7" level="H2" class="sapUiTinyMarginBottom"/>
+                                <Title text="{approvals>/stats/delegatedCount || '0'}" level="H2" class="sapUiTinyMarginBottom"/>
                                 <Text text="Assigned to Others"/>
                                 <Button 
                                     text="View Delegated"
@@ -104,7 +103,7 @@
                     </content>
                 </Panel>
                 
-                <!-- Approvals Table -->
+                <!-- Approvals Table - SIMPLIFIED: Removed Submitted and Due By columns -->
                 <Panel headerText="Pending Approvals" expandable="true" expanded="true" 
                        class="sapUiNoContentPadding" height="100%">
                     <headerToolbar>
@@ -114,7 +113,7 @@
                             <SearchField 
                                 id="searchField"
                                 width="20rem"
-                                placeholder="Search approvals..."
+                                placeholder="Search by PR number or requestor..."
                                 search=".onSearch"
                                 liveChange=".onLiveSearch"/>
                             <Button 
@@ -133,8 +132,7 @@
                                 path: 'approvals>/pendingApprovals',
                                 sorter: {
                                     path: 'priority',
-                                    descending: true,
-                                    group: true
+                                    descending: true
                                 }
                             }"
                             mode="SingleSelectMaster"
@@ -148,28 +146,22 @@
                                 <Column width="12em">
                                     <Text text="PR Number"/>
                                 </Column>
-                                <Column>
-                                    <Text text="Description"/>
+                                <Column width="10em">
+                                    <Text text="Department"/>
                                 </Column>
                                 <Column width="8em">
                                     <Text text="Priority"/>
                                 </Column>
-                                <Column width="8em">
+                                <Column width="9em">
                                     <Text text="Amount"/>
                                 </Column>
-                                <Column width="10em">
+                                <Column width="11em">
                                     <Text text="Requestor"/>
-                                </Column>
-                                <Column width="10em">
-                                    <Text text="Submitted"/>
-                                </Column>
-                                <Column width="10em">
-                                    <Text text="Due By"/>
                                 </Column>
                                 <Column width="8em">
                                     <Text text="Days Left"/>
                                 </Column>
-                                <Column width="12em">
+                                <Column width="14em">
                                     <Text text="Actions"/>
                                 </Column>
                             </columns>
@@ -183,21 +175,15 @@
                                         formatter: '.formatter.priorityHighlight'
                                     }">
                                     <cells>
+                                        <!-- PR Number -->
                                         <ObjectIdentifier
                                             title="{approvals>prNumber}"
-                                            text="{approvals>department}"/>
-                                        <VBox>
-                                            <Text text="{approvals>description}" wrapping="true"/>
-                                            <HBox class="sapUiTinyMarginTop">
-                                                <core:Icon 
-                                                    src="sap-icon://attachment"
-                                                    size="0.75rem"
-                                                    color="#6a6d70"
-                                                    class="sapUiTinyMarginEnd"/>
-                                                <Text text="{approvals>attachments} attachments" 
-                                                      class="sapUiTinyFontSize"/>
-                                            </HBox>
-                                        </VBox>
+                                            text="{approvals>prType}"/>
+                                        
+                                        <!-- Department -->
+                                        <Text text="{approvals>department}"/>
+                                        
+                                        <!-- Priority -->
                                         <ObjectStatus 
                                             text="{approvals>priority}"
                                             state="{
@@ -208,47 +194,59 @@
                                                 path: 'approvals>priority',
                                                 formatter: '.formatter.priorityIcon'
                                             }"/>
+                                        
+                                        <!-- Amount -->
                                         <ObjectNumber 
-                                            number="{approvals>amount}"
+                                            number="{
+                                                path: 'approvals>totalAmount',
+                                                formatter: '.formatter.formatCurrency'
+                                            }"
                                             unit="USD"
                                             state="Success"
                                             emphasized="false"/>
+                                        
+                                        <!-- Requestor with Attachments -->
                                         <VBox>
                                             <Text text="{approvals>requestor}"/>
-                                            <Text text="{approvals>requestorTitle}" 
-                                                  class="sapUiTinyMarginTop sapUiTinyFontSize"/>
+                                            <HBox class="sapUiTinyMarginTop">
+                                                <core:Icon 
+                                                    src="sap-icon://attachment"
+                                                    size="0.75rem"
+                                                    color="#6a6d70"
+                                                    class="sapUiTinyMarginEnd"/>
+                                                <Text text="{approvals>attachmentsCount} att." 
+                                                      class="sapUiTinyFontSize"/>
+                                                <core:Icon 
+                                                    src="sap-icon://list"
+                                                    size="0.75rem"
+                                                    color="#6a6d70"
+                                                    class="sapUiTinyMarginBegin"/>
+                                                <Text text="{approvals>totalItems} items" 
+                                                      class="sapUiTinyMarginBegin sapUiTinyFontSize"/>
+                                            </HBox>
                                         </VBox>
-                                        <Text text="{
-                                            path: 'approvals>submittedDate',
-                                            type: 'sap.ui.model.type.Date',
-                                            formatOptions: {
-                                                style: 'short'
-                                            }
-                                        }"/>
-                                        <HBox alignItems="Center">
+                                        
+                                        <!-- Days Left with Status -->
+                                        <VBox alignItems="Center">
+                                            <ObjectStatus 
+                                                text="{approvals>daysLeft}"
+                                                state="{
+                                                    path: 'approvals>dueStatus',
+                                                    formatter: '.formatter.dueStatusState'
+                                                }"
+                                                class="sapUiTinyMarginBottom"/>
                                             <Text text="{
                                                 path: 'approvals>dueDate',
                                                 type: 'sap.ui.model.type.Date',
                                                 formatOptions: {
-                                                    style: 'medium'
+                                                    style: 'short'
                                                 }
-                                            }"/>
-                                            <core:Icon 
-                                                src="sap-icon://calendar"
-                                                size="1rem"
-                                                class="sapUiTinyMarginBegin"
-                                                color="{
-                                                    path: 'approvals>dueStatus',
-                                                    formatter: '.formatter.dueDateColor'
-                                                }"/>
-                                        </HBox>
-                                        <ObjectStatus 
-                                            text="{approvals>daysLeft}"
-                                            state="{
-                                                path: 'approvals>dueStatus',
-                                                formatter: '.formatter.dueStatusState'
-                                            }"/>
-                                        <HBox>
+                                            }"
+                                            class="sapUiTinyFontSize"/>
+                                        </VBox>
+                                        
+                                        <!-- Actions -->
+                                        <HBox justifyContent="Center">
                                             <Button 
                                                 text="Approve"
                                                 type="Accept"
@@ -318,15 +316,22 @@
                                 <HBox alignItems="Center" class="sapUiSmallMargin">
                                     <VBox class="sapUiTinyMarginEnd">
                                         <ObjectStatus 
-                                            state="Success"
-                                            icon="sap-icon://accept"
+                                            state="{= ${approvals>action} === 'Approved' ? 'Success' : 'Error'}"
+                                            icon="{= ${approvals>action} === 'Approved' ? 'sap-icon://accept' : 'sap-icon://decline'}"
                                             class="sapUiTinyMarginBottom"/>
                                     </VBox>
                                     <VBox class="sapUiSmallMarginBegin">
                                         <Title text="{approvals>prNumber}" level="H4"/>
-                                        <Text text="Approved by {approvals>approver} on {approvals>approvalDate}"/>
-                                        <Text text="Comment: {approvals>comment}" 
-                                              class="sapUiTinyMarginTop sapUiTinyFontSize"/>
+                                        <Text text="{approvals>action} by {approvals>approver} on {
+                                            path: 'approvals>approvalDate',
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                                style: 'medium'
+                                            }
+                                        }"/>
+                                        <Text text="{approvals>comment}" 
+                                              class="sapUiTinyMarginTop sapUiTinyFontSize"
+                                              visible="{= !!${approvals>comment}}"/>
                                     </VBox>
                                     <ToolbarSpacer/>
                                     <Button 

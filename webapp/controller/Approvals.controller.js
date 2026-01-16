@@ -7,13 +7,115 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter"
-], function(Controller, History, MessageToast, MessageBox, JSONModel, Filter, FilterOperator, Sorter) {
+], function (Controller, History, MessageToast, MessageBox, JSONModel, Filter, FilterOperator, Sorter) {
     "use strict";
 
     return Controller.extend("ui5.procurementhub.controller.Approvals", {
-        
+        onInit: function () {
+            // Get the purchase requests service
+            var oComponent = this.getOwnerComponent();
+            var oPRModel = oComponent.getModel("purchaseRequests");
+            var oPRService = oComponent.getPurchaseRequestService();
+
+            // Get pending approvals from service
+            var aPendingApprovals = oPRService.getPendingApprovals(oPRModel);
+            var aRecentHistory = oPRService.getApprovalHistory(oPRModel, 10);
+            var oStats = oPRService.getApprovalStatistics(oPRModel);
+
+            // Initialize approvals model
+            var oModel = new JSONModel({
+                pendingApprovals: aPendingApprovals,
+                recentHistory: aRecentHistory,
+                selectedCount: 0,
+                stats: oStats
+            });
+
+            this.getView().setModel(oModel, "approvals");
+
+            // Initialize selected items array for multi-select
+            this._aSelectedItems = [];
+            this._oPRService = oPRService;
+            this._oPRModel = oPRModel;
+
+            // Get table reference
+            this._oTable = this.byId("approvalsTable");
+        },
+
+        // Update data generation methods to use service
+        _generateApprovalsData: function () {
+            // Get data from service
+            var oComponent = this.getOwnerComponent();
+            var oPRModel = oComponent.getModel("purchaseRequests");
+            var oPRService = oComponent.getPurchaseRequestService();
+
+            var aPendingApprovals = oPRService.getPendingApprovals(oPRModel);
+            var aRecentHistory = oPRService.getApprovalHistory(oPRModel, 10);
+            var oStats = oPRService.getApprovalStatistics(oPRModel);
+
+            return {
+                pendingApprovals: aPendingApprovals,
+                recentHistory: aRecentHistory,
+                selectedCount: 0,
+                stats: oStats
+            };
+        },
+
+        // Update approval methods to use service
+        _approvePR: function (prNumber) {
+            MessageBox.confirm("Approve purchase request " + prNumber + "?", {
+                title: "Confirm Approval",
+                onClose: function (oAction) {
+                    if (oAction === MessageBox.Action.OK) {
+                        // Get PR by number
+                        var oPR = this._oPRService.getPurchaseRequestByNumber(this._oPRModel, prNumber);
+                        if (oPR) {
+                            var bSuccess = this._oPRService.approvePurchaseRequest(
+                                this._oPRModel,
+                                oPR.id,
+                                "Current User",
+                                "Approved via Approvals Inbox"
+                            );
+
+                            if (bSuccess) {
+                                this._removeFromPending(prNumber);
+                                MessageToast.show("Purchase request " + prNumber + " approved successfully");
+                            } else {
+                                MessageBox.error("Failed to approve purchase request");
+                            }
+                        }
+                    }
+                }.bind(this)
+            });
+        },
+
+        _rejectPR: function (prNumber) {
+            MessageBox.confirm("Reject purchase request " + prNumber + "?", {
+                title: "Confirm Rejection",
+                onClose: function (oAction) {
+                    if (oAction === MessageBox.Action.OK) {
+                        // Get PR by number
+                        var oPR = this._oPRService.getPurchaseRequestByNumber(this._oPRModel, prNumber);
+                        if (oPR) {
+                            var bSuccess = this._oPRService.rejectPurchaseRequest(
+                                this._oPRModel,
+                                oPR.id,
+                                "Current User",
+                                "Rejected via Approvals Inbox"
+                            );
+
+                            if (bSuccess) {
+                                this._removeFromPending(prNumber);
+                                MessageToast.show("Purchase request " + prNumber + " rejected");
+                            } else {
+                                MessageBox.error("Failed to reject purchase request");
+                            }
+                        }
+                    }
+                }.bind(this)
+            });
+        },
         formatter: {
-            priorityState: function(sPriority) {
+            priorityState: function (sPriority) {
                 switch (sPriority) {
                     case "URGENT": return "Error";
                     case "HIGH": return "Error";
@@ -22,8 +124,8 @@ sap.ui.define([
                     default: return "None";
                 }
             },
-            
-            priorityIcon: function(sPriority) {
+
+            priorityIcon: function (sPriority) {
                 switch (sPriority) {
                     case "URGENT": return "sap-icon://alert";
                     case "HIGH": return "sap-icon://high-priority";
@@ -32,8 +134,8 @@ sap.ui.define([
                     default: return "";
                 }
             },
-            
-            priorityHighlight: function(sPriority) {
+
+            priorityHighlight: function (sPriority) {
                 switch (sPriority) {
                     case "URGENT": return "Error";
                     case "HIGH": return "Error";
@@ -42,8 +144,8 @@ sap.ui.define([
                     default: return "None";
                 }
             },
-            
-            dueStatusState: function(sDueStatus) {
+
+            dueStatusState: function (sDueStatus) {
                 switch (sDueStatus) {
                     case "OVERDUE": return "Error";
                     case "DUE_SOON": return "Warning";
@@ -51,8 +153,8 @@ sap.ui.define([
                     default: return "None";
                 }
             },
-            
-            dueDateColor: function(sDueStatus) {
+
+            dueDateColor: function (sDueStatus) {
                 switch (sDueStatus) {
                     case "OVERDUE": return "#bb0000";
                     case "DUE_SOON": return "#e78c07";
@@ -60,27 +162,36 @@ sap.ui.define([
                     default: return "#6a6d70";
                 }
             },
-            
-            formatDate: function(sDate) {
+
+            formatDate: function (sDate) {
                 if (!sDate) return "";
                 var oDate = new Date(sDate);
                 return oDate.toLocaleDateString();
             }
         },
+        formatCurrency: function (amount) {
+            if (amount === undefined || amount === null) return "$0.00";
+            var num = parseFloat(amount);
+            if (isNaN(num)) return "$0.00";
+            return "$" + num.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
 
-        onInit: function() {
+        onInit: function () {
             // Initialize approvals model with sample data
             var oModel = new JSONModel(this._generateApprovalsData());
             this.getView().setModel(oModel, "approvals");
-            
+
             // Initialize selected items array for multi-select
             this._aSelectedItems = [];
-            
+
             // Get table reference
             this._oTable = this.byId("approvalsTable");
         },
 
-        _generateApprovalsData: function() {
+        _generateApprovalsData: function () {
             // Generate sample approvals data
             return {
                 pendingApprovals: this._generatePendingApprovals(25),
@@ -89,28 +200,28 @@ sap.ui.define([
             };
         },
 
-        _generatePendingApprovals: function(count) {
+        _generatePendingApprovals: function (count) {
             var aPriorities = ["URGENT", "HIGH", "MEDIUM", "LOW"];
             var aDepartments = ["IT", "Marketing", "HR", "Finance", "Operations", "Sales", "R&D"];
             var aRequestors = ["John Smith", "Emma Johnson", "Michael Brown", "Sarah Davis", "Robert Wilson"];
             var aTitles = ["Manager", "Director", "Senior Analyst", "Team Lead", "Specialist"];
-            
+
             var aData = [];
             var dToday = new Date();
-            
+
             for (var i = 1; i <= count; i++) {
                 var iDaysAgo = Math.floor(Math.random() * 7);
                 var iDaysDue = Math.floor(Math.random() * 14) - 2; // -2 to 11 days
                 var dSubmitted = new Date(dToday);
                 dSubmitted.setDate(dSubmitted.getDate() - iDaysAgo);
-                
+
                 var dDue = new Date(dToday);
                 dDue.setDate(dDue.getDate() + iDaysDue);
-                
+
                 var fAmount = (Math.random() * 10000 + 1000).toFixed(2);
                 var sPriority = aPriorities[Math.floor(Math.random() * aPriorities.length)];
                 var sDueStatus = iDaysDue < 0 ? "OVERDUE" : (iDaysDue < 3 ? "DUE_SOON" : "ON_TIME");
-                
+
                 aData.push({
                     id: "apr_" + Date.now() + "_" + i,
                     prNumber: "PR-2023-" + (1200 + i).toString().padStart(5, '0'),
@@ -131,25 +242,25 @@ sap.ui.define([
                     comments: Math.random() > 0.7 ? "Budget review required" : ""
                 });
             }
-            
+
             return aData;
         },
 
-        _generateRecentHistory: function(count) {
+        _generateRecentHistory: function (count) {
             var aActions = ["APPROVED", "REJECTED", "DELEGATED"];
             var aApprovers = ["David Miller", "Lisa Anderson", "James Taylor", "Maria Garcia"];
-            
+
             var aData = [];
             var dToday = new Date();
-            
+
             for (var i = 1; i <= count; i++) {
                 var iDaysAgo = Math.floor(Math.random() * 30);
                 var dActionDate = new Date(dToday);
                 dActionDate.setDate(dActionDate.getDate() - iDaysAgo);
-                
+
                 var sAction = aActions[Math.floor(Math.random() * aActions.length)];
                 var sComment = "";
-                
+
                 switch (sAction) {
                     case "APPROVED":
                         sComment = "Approved per budget allocation";
@@ -161,7 +272,7 @@ sap.ui.define([
                         sComment = "Delegated to department head for review";
                         break;
                 }
-                
+
                 aData.push({
                     id: "hist_" + i,
                     prNumber: "PR-2023-" + (1100 + i).toString().padStart(5, '0'),
@@ -172,14 +283,14 @@ sap.ui.define([
                     timestamp: dActionDate.toISOString()
                 });
             }
-            
+
             // Sort by date descending
             aData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
+
             return aData;
         },
 
-        onNavBack: function() {
+        onNavBack: function () {
             var oHistory = History.getInstance();
             var sPreviousHash = oHistory.getPreviousHash();
 
@@ -190,18 +301,18 @@ sap.ui.define([
             }
         },
 
-        onRefresh: function() {
+        onRefresh: function () {
             MessageToast.show("Refreshing approvals...");
             // In real implementation, fetch from backend
             var oModel = this.getView().getModel("approvals");
             oModel.refresh(true);
         },
 
-        onToggleMultiSelect: function() {
+        onToggleMultiSelect: function () {
             var oTable = this.byId("approvalsTable");
             var oBulkPanel = this.byId("bulkActionsPanel");
             var oToggleBtn = this.byId("multiSelectToggle");
-            
+
             if (oTable.getMode() === "SingleSelectMaster") {
                 oTable.setMode("MultiSelect");
                 oBulkPanel.setVisible(true);
@@ -217,19 +328,19 @@ sap.ui.define([
             }
         },
 
-        onOpenFilter: function() {
+        onOpenFilter: function () {
             MessageBox.information("Filter dialog would open here with options to filter by department, amount, priority, etc.");
         },
 
-        onApprovalSettings: function() {
+        onApprovalSettings: function () {
             this.getOwnerComponent().getRouter().navTo("settings");
         },
 
-        onSearch: function(oEvent) {
+        onSearch: function (oEvent) {
             var sQuery = oEvent.getParameter("query");
             var oTable = this.byId("approvalsTable");
             var oBinding = oTable.getBinding("items");
-            
+
             if (oBinding) {
                 if (sQuery) {
                     var aFilters = [
@@ -247,14 +358,14 @@ sap.ui.define([
             }
         },
 
-        onLiveSearch: function(oEvent) {
+        onLiveSearch: function (oEvent) {
             // Optional: Implement live search if needed
         },
 
-        onOpenSort: function() {
+        onOpenSort: function () {
             var oTable = this.byId("approvalsTable");
             var oBinding = oTable.getBinding("items");
-            
+
             if (oBinding) {
                 var aSorters = [
                     new Sorter("priority", false),
@@ -265,11 +376,11 @@ sap.ui.define([
             }
         },
 
-        onGroupBy: function() {
+        onGroupBy: function () {
             MessageBox.information("Group by dialog would open here (group by department, priority, etc.)");
         },
 
-        onSelectionChange: function(oEvent) {
+        onSelectionChange: function (oEvent) {
             if (this._oTable.getMode() === "MultiSelect") {
                 var aSelectedItems = oEvent.getParameter("listItems");
                 this._aSelectedItems = aSelectedItems;
@@ -277,7 +388,7 @@ sap.ui.define([
             }
         },
 
-        _updateSelectedCount: function() {
+        _updateSelectedCount: function () {
             var oSelectedCount = this.byId("selectedCount");
             if (oSelectedCount) {
                 oSelectedCount.setText(this._aSelectedItems.length.toString());
@@ -285,26 +396,26 @@ sap.ui.define([
             }
         },
 
-        onItemPress: function(oEvent) {
+        onItemPress: function (oEvent) {
             var oItem = oEvent.getSource();
             var oContext = oItem.getBindingContext("approvals");
-            
+
             if (oContext) {
                 var sPRNumber = oContext.getProperty("prNumber");
                 var sDescription = oContext.getProperty("description");
-                
+
                 // Open approval dialog
                 this._openApprovalDialog(sPRNumber, sDescription);
             }
         },
 
-        _openApprovalDialog: function(prNumber, description) {
+        _openApprovalDialog: function (prNumber, description) {
             MessageBox.show("Review purchase request: " + prNumber + "\n\n" + description, {
                 icon: MessageBox.Icon.QUESTION,
                 title: "Approve or Reject",
                 actions: [MessageBox.Action.APPROVE, MessageBox.Action.REJECT, MessageBox.Action.CANCEL],
                 emphasizedAction: MessageBox.Action.APPROVE,
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.APPROVE) {
                         this._approvePR(prNumber);
                     } else if (oAction === MessageBox.Action.REJECT) {
@@ -314,36 +425,36 @@ sap.ui.define([
             });
         },
 
-        onApprove: function(oEvent) {
+        onApprove: function (oEvent) {
             oEvent.stopPropagation();
             var oButton = oEvent.getSource();
             var oRow = oButton.getParent().getParent();
             var oContext = oRow.getBindingContext("approvals");
-            
+
             if (oContext) {
                 var sPRNumber = oContext.getProperty("prNumber");
                 this._approvePR(sPRNumber);
             }
         },
 
-        onReject: function(oEvent) {
+        onReject: function (oEvent) {
             oEvent.stopPropagation();
             var oButton = oEvent.getSource();
             var oRow = oButton.getParent().getParent();
             var oContext = oRow.getBindingContext("approvals");
-            
+
             if (oContext) {
                 var sPRNumber = oContext.getProperty("prNumber");
                 this._rejectPR(sPRNumber);
             }
         },
 
-        onAddComment: function(oEvent) {
+        onAddComment: function (oEvent) {
             oEvent.stopPropagation();
             MessageBox.prompt("Add comment for this approval:", {
                 title: "Add Comment",
                 defaultValue: "",
-                onClose: function(oAction, sComment) {
+                onClose: function (oAction, sComment) {
                     if (oAction === MessageBox.Action.OK && sComment) {
                         MessageToast.show("Comment added: " + sComment);
                     }
@@ -351,10 +462,10 @@ sap.ui.define([
             });
         },
 
-        _approvePR: function(prNumber) {
+        _approvePR: function (prNumber) {
             MessageBox.confirm("Approve purchase request " + prNumber + "?", {
                 title: "Confirm Approval",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         // In real implementation, update backend
                         this._removeFromPending(prNumber);
@@ -364,10 +475,10 @@ sap.ui.define([
             });
         },
 
-        _rejectPR: function(prNumber) {
+        _rejectPR: function (prNumber) {
             MessageBox.confirm("Reject purchase request " + prNumber + "?", {
                 title: "Confirm Rejection",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         // In real implementation, update backend
                         this._removeFromPending(prNumber);
@@ -377,40 +488,40 @@ sap.ui.define([
             });
         },
 
-        _removeFromPending: function(prNumber) {
+        _removeFromPending: function (prNumber) {
             var oModel = this.getView().getModel("approvals");
             var aPending = oModel.getProperty("/pendingApprovals");
             var iIndex = aPending.findIndex(item => item.prNumber === prNumber);
-            
+
             if (iIndex !== -1) {
                 aPending.splice(iIndex, 1);
                 oModel.setProperty("/pendingApprovals", aPending);
             }
         },
 
-        onViewUrgent: function() {
+        onViewUrgent: function () {
             this._filterByPriority("URGENT");
         },
 
-        onViewAll: function() {
+        onViewAll: function () {
             var oTable = this.byId("approvalsTable");
             var oBinding = oTable.getBinding("items");
             oBinding.filter([]);
             MessageToast.show("Showing all pending approvals");
         },
 
-        onViewOverdue: function() {
+        onViewOverdue: function () {
             this._filterByDueStatus("OVERDUE");
         },
 
-        onViewDelegated: function() {
+        onViewDelegated: function () {
             MessageBox.information("View delegated approvals would show items assigned to other approvers");
         },
 
-        _filterByPriority: function(sPriority) {
+        _filterByPriority: function (sPriority) {
             var oTable = this.byId("approvalsTable");
             var oBinding = oTable.getBinding("items");
-            
+
             if (oBinding) {
                 var oFilter = new Filter("priority", FilterOperator.EQ, sPriority);
                 oBinding.filter([oFilter]);
@@ -418,10 +529,10 @@ sap.ui.define([
             }
         },
 
-        _filterByDueStatus: function(sDueStatus) {
+        _filterByDueStatus: function (sDueStatus) {
             var oTable = this.byId("approvalsTable");
             var oBinding = oTable.getBinding("items");
-            
+
             if (oBinding) {
                 var oFilter = new Filter("dueStatus", FilterOperator.EQ, sDueStatus);
                 oBinding.filter([oFilter]);
@@ -429,16 +540,16 @@ sap.ui.define([
             }
         },
 
-        onBulkApprove: function() {
+        onBulkApprove: function () {
             if (this._aSelectedItems.length === 0) {
                 MessageBox.warning("Please select items to approve");
                 return;
             }
-            
+
             var iCount = this._aSelectedItems.length;
             MessageBox.confirm("Approve " + iCount + " selected purchase requests?", {
                 title: "Bulk Approval",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         // In real implementation, process all selected items
                         MessageToast.show(iCount + " purchase requests approved");
@@ -449,16 +560,16 @@ sap.ui.define([
             });
         },
 
-        onBulkReject: function() {
+        onBulkReject: function () {
             if (this._aSelectedItems.length === 0) {
                 MessageBox.warning("Please select items to reject");
                 return;
             }
-            
+
             var iCount = this._aSelectedItems.length;
             MessageBox.confirm("Reject " + iCount + " selected purchase requests?", {
                 title: "Bulk Rejection",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         // In real implementation, process all selected items
                         MessageToast.show(iCount + " purchase requests rejected");
@@ -469,18 +580,18 @@ sap.ui.define([
             });
         },
 
-        onBulkDelegate: function() {
+        onBulkDelegate: function () {
             MessageBox.information("Delegate dialog would open to assign selected items to another approver");
         },
 
-        onDelegateAll: function() {
+        onDelegateAll: function () {
             MessageBox.confirm("Delegate all pending approvals to another approver?", {
                 title: "Delegate All",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         MessageBox.prompt("Enter approver name:", {
                             title: "Select Approver",
-                            onClose: function(oAction2, sApprover) {
+                            onClose: function (oAction2, sApprover) {
                                 if (oAction2 === MessageBox.Action.OK && sApprover) {
                                     MessageToast.show("All approvals delegated to " + sApprover);
                                 }
@@ -491,10 +602,10 @@ sap.ui.define([
             });
         },
 
-        onRejectAll: function() {
+        onRejectAll: function () {
             MessageBox.confirm("Reject all pending approvals? This action cannot be undone.", {
                 title: "Reject All",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         // In real implementation, reject all items
                         MessageToast.show("All pending approvals rejected");
@@ -503,10 +614,10 @@ sap.ui.define([
             });
         },
 
-        onApproveAll: function() {
+        onApproveAll: function () {
             MessageBox.confirm("Approve all pending approvals?", {
                 title: "Approve All",
-                onClose: function(oAction) {
+                onClose: function (oAction) {
                     if (oAction === MessageBox.Action.OK) {
                         // In real implementation, approve all items
                         MessageToast.show("All pending approvals approved");
@@ -515,11 +626,11 @@ sap.ui.define([
             });
         },
 
-        onViewHistoryDetails: function(oEvent) {
+        onViewHistoryDetails: function (oEvent) {
             var oButton = oEvent.getSource();
             var oItem = oButton.getParent().getParent();
             var oContext = oItem.getBindingContext("approvals");
-            
+
             if (oContext) {
                 var sPRNumber = oContext.getProperty("prNumber");
                 MessageToast.show("Viewing details for " + sPRNumber);
@@ -530,17 +641,17 @@ sap.ui.define([
             }
         },
 
-        onUpdateFinished: function(oEvent) {
+        onUpdateFinished: function (oEvent) {
             var iTotalItems = oEvent.getParameter("total");
             var oTableHeader = this.byId("approvalsTable").getHeaderToolbar();
             var oTitle = oTableHeader && oTableHeader.getContent()[0];
-            
+
             if (oTitle && oTitle.getText) {
                 oTitle.setText("Approval Requests (" + iTotalItems + ")");
             }
         },
 
-        onExit: function() {
+        onExit: function () {
             // Clean up
             this._aSelectedItems = null;
             this._oTable = null;
